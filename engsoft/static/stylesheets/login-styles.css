@@ -1,0 +1,79 @@
+a.alert {
+    background-color: var(--SEF-orange);
+    border-color: var(--SEF-orange);
+    font-weight: 600;
+}
+
+a.alert:hover {
+    color: var(--SEF-orange);
+}
+
+.header-login {
+    background-color: var(--SEF-darkblue);
+    height: 90px;
+    width: 100vw;
+}
+
+.frontpage {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 1440px;
+    width: 100vw;
+    justify-content: space-evenly;
+}
+
+/* Estilos para o container do formulário de login */
+.login-container {
+    background-color: #fff;
+    padding: 50px 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    max-width: 480px;
+    width: 50vw;
+    text-align: center;
+}
+
+.login-container a {
+    margin: 1vw;
+}
+
+.logo {
+    text-align: center;
+}
+
+.logo h1 {
+    font-family: "Montserrat Alternates", sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 4.5vw;
+    padding: 0 50px;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.logo p {
+    padding: 0 50px;
+}
+
+/* Media query para telas pequenas (celulares) */
+@media screen and (max-width: 900px) {
+    .frontpage {
+        flex-direction: column;
+    }
+
+    .logo {
+        margin: 5vh 0;
+    }
+
+    .login-container {
+        flex-direction: column;
+        width: 90vw;
+    }
+}
+
+@media screen and (max-width: 1290px) {
+    .logo h1 {
+        font-size: 60px;
+    }
+}

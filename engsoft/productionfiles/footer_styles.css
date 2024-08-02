@@ -1,0 +1,16 @@
+.footer {
+    padding: 2vh 5vw;
+    background-color: var(--SEF-darkblue);
+    color: white;
+    width: 100%;
+    text-align: center;
+}
+
+.footer p {
+    padding: 0.5vh 0;
+    font-size: 8px;
+}
+
+.footer i {
+    color: var(--SEF-white);
+}
