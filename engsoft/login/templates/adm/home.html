@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo, {{ construtora_nome }}!</h1>        
+    </div>
+    <div class="container">
+        <a href="{% url 'adm_meus_condominios' %}" class="btn btn-primary">Meus condomínios</a>
+    </div>
+    <div class="container">
+        <a href="{% url 'adm_criar_predio' %}" class="btn btn-primary">Criar prédio</a>
+    </div>
+    <div class="container">
+        <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+    </div>
+</body>
+</html>

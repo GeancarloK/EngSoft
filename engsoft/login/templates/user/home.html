@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Home</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>Login do Morador</h1>
+        <h1>Bem-vindo, {{ pessoa.nome }}!</h1>   
     </div>
     <div class="container">
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Entrar</button>
-        </form>
+        <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
     </div>
 </body>
 </html>
+
