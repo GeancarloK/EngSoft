@@ -3,6 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from .models import Pessoa, NotPessoa, Condominio
+import re
 
 # Funções de validação
 def validate_bloco(bloco, condominio):
@@ -111,3 +112,56 @@ class NotPessoaForm(forms.ModelForm):
                 validate_apt(apt, condominio)
 
         return cleaned_data
+    
+# Formulário de Cadastro
+class SignUpForm(forms.ModelForm):
+    username = forms.CharField(label='Usuário', required=True)
+    email = forms.EmailField(label='E-mail')
+    email2 = forms.EmailField(label='Confirmar E-mail')
+    password = forms.CharField(label='Senha', widget=forms.PasswordInput, required=True)
+    password2 = forms.CharField(label='Confirmar Senha', widget=forms.PasswordInput, required=True)
+
+    class Meta:
+        model = NotPessoa
+        fields = ['username',
+                  'password',
+                  'password2',
+                  'email',
+                  'email2',
+                  'nome',
+                  'cpf',
+                  ]
+
+    def clean_email2(self):
+        email = self.cleaned_data.get('email')
+        email2 = self.cleaned_data.get('email2')
+        if email and email2 and email != email2:
+            raise forms.ValidationError("Os e-mails não são iguais")
+        return email2
+
+    def clean_password2(self):
+        password = self.cleaned_data.get('password')
+        password2 = self.cleaned_data.get('password2')
+        if not password or not password2:
+            raise forms.ValidationError("Deve haver uma senha")
+        if password != password2:
+            raise forms.ValidationError("As senhas não são iguais")
+        if len(password) < 8:
+            raise forms.ValidationError("A senha deve ter 8 caracteres no mínimo")
+        if len(re.findall(r'\d', password)) < 2:
+            raise forms.ValidationError("A senha deve ter pelo menos 2 números")
+        return password2
+
+    def clean_username(self):
+        username = self.cleaned_data['username'].lower()
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Este nome de usuário já está em uso.")
+        return username
+
+    def save(self, commit=True):
+        user = User.objects.create_user(username=self.cleaned_data['username'].lower(), password=self.cleaned_data['password'])
+        not_pessoa = super(SignUpForm, self).save(commit=False)
+        not_pessoa.usuario = user
+        if commit:
+            not_pessoa.save()
+        return not_pessoa

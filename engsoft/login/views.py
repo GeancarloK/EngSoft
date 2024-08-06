@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import views as auth_views
 from . import views
-from .forms import PessoaForm
+from .forms import PessoaForm, SignUpForm
 import json
 
 
@@ -22,29 +22,15 @@ def logoff(request):
 
 def cadastro(request):
     if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-        not_pessoa_form = NotPessoaForm(request.POST)
-
-        if user_form.is_valid() and not_pessoa_form.is_valid():
-            user = user_form.save(commit=False)
-            user.set_password(user_form.cleaned_data['password'])
-            user.save()
-
-            not_pessoa = not_pessoa_form.save(commit=False)
-            not_pessoa.usuario = user
-            not_pessoa.save()
-
-            auth_login(request, user)  # Logar o usuário automaticamente
-
-            return redirect('not_pessoa_home')  # Redirecionar para a página `not_pessoa_home` após o cadastro
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  
+        else:
+            print(form.errors) #debug
     else:
-        user_form = UserRegistrationForm()
-        not_pessoa_form = NotPessoaForm()
-
-    return render(request, 'cadastro.html', {
-        'user_form': user_form,
-        'not_pessoa_form': not_pessoa_form
-    })
+        form = SignUpForm()
+    return render(request, 'cadastro.html', {'form': form})
 
 ### ADMINISTRADORA
 
@@ -220,3 +206,32 @@ def not_pessoa_home(request):
         'condominios': condominios,
         'pendencia': not_pessoa.pendencia  # Adiciona pendência para exibir
     })
+
+
+
+
+
+
+
+
+
+def adm_aprovar_morador(request, pk):
+    not_pessoa = get_object_or_404(NotPessoa, pk=pk)
+    if request.method == 'POST':
+        Pessoa.objects.create(
+            usuario=not_pessoa.usuario,
+            nome=not_pessoa.nome,
+            email=not_pessoa.email,
+            cpf=not_pessoa.cpf,
+            bloco=not_pessoa.bloco,
+            andar=not_pessoa.andar,
+            apt=not_pessoa.apt,
+        )
+        not_pessoa.delete()
+        return redirect('admin_pendentes')  # Redirect to a suitable page
+
+    return render(request, 'adm/aprovar_morador.html', {'not_pessoa': not_pessoa})
+
+def adm_pendentes(request):
+    pending_registrations = NotPessoa.objects.all()
+    return render(request, 'adm/pendentes.html', {'pending_registrations': pending_registrations})

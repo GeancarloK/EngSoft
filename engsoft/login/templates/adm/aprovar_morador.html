@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aprovar Moradores</title>
+</head>
+<body>
+    <h2>Aprovar <b>{{ not_pessoa.nome }}</b> como morador.</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Aprovar</button>
+    </form>
+</body>
+</html>

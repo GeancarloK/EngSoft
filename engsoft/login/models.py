@@ -49,12 +49,11 @@ def validate_apt(value, condominio):
     if value < 1 or value > condominio.nro_apt:
         raise ValidationError(f'Apartamento deve ser entre 1 e {condominio.nro_apt}.')
 
-
 class Pessoa(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     condominio = models.ForeignKey(Condominio, on_delete=models.SET_NULL, blank=True, null=True)
     nome = models.CharField(max_length=200)
-    email = models.CharField(max_length=200, default = "Sem e-mail")
+    email = models.EmailField(max_length=200)
     data = models.DateTimeField(auto_now_add=True)
     cpf = models.CharField(max_length=11, validators=[validate_cpf], default = "00000000000")
     sindico = models.BooleanField("Síndico")
@@ -90,7 +89,7 @@ class Relatorio(models.Model):
     
 class NotPessoa(models.Model):
     nome = models.CharField(max_length=200)
-    email = models.CharField(max_length=200, default = "Sem e-mail")
+    email = models.EmailField(max_length=200)
     data = models.DateTimeField(auto_now_add=True)
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     pendencia = models.ForeignKey(Condominio, on_delete=models.SET_NULL, blank=True, null=True)

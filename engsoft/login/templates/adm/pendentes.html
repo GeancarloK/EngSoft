@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pendências</title>
+</head>
+<body>
+    <h2>Pendências</h2>
+    <ul>
+        {% for not_pessoa in pending_registrations %}
+            <li>{{ not_pessoa.nome }} - <a href="{% url 'adm_aprovar_morador' not_pessoa.pk %}">Approve</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

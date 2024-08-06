@@ -6,13 +6,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>Cadastro de Novo Usuário</h1>
+        <h2>Cadastro</h2>
         <form method="post">
             {% csrf_token %}
-            <h2>Dados do Usuário</h2>
-            {{ user_form.as_p }}
-            <h2>Dados do Pedido</h2>
-            {{ not_pessoa_form.as_p }}
+            {{ form.username.label_tag }} {{ form.username }}
+            {{ form.password.label_tag }} {{ form.password }}
+            {{ form.password2.label_tag }} {{ form.password2 }}
+            {{ form.email.label_tag }} {{ form.email }}
+            {{ form.email2.label_tag }} {{ form.email2 }}
+            {{ form.nome.label_tag }} {{ form.nome }}
+            {{ form.cpf.label_tag }} {{ form.cpf }}
+            {{ form.bloco.label_tag }} {{ form.bloco }}
+            {{ form.andar.label_tag }} {{ form.andar }}
+            {{ form.apt.label_tag }} {{ form.apt }}
             <button type="submit" class="btn btn-primary">Cadastrar</button>
         </form>
     </div>

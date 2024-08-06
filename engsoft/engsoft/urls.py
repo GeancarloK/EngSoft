@@ -18,6 +18,8 @@ urlpatterns = [
     path('adm/criar_predio/', li.adm_criar_predio, name='adm_criar_predio'),
     path('adm/condominio/<int:condominio_id>/', li.adm_detalhes_condominio, name='adm_detalhes_condominio'),
     path('adm/morador/<int:morador_id>/', li.adm_detalhes_morador, name='adm_detalhes_morador'),
+    path('adm/pendentes/', li.adm_pendentes, name='adm_pendentes'),
+    path('adm/aprovar_morador/<int:pk>/', li.adm_aprovar_morador, name='adm_aprovar_morador'),
     
     ##moradores
     path('user/home/', li.user_home, name='user_home'),
