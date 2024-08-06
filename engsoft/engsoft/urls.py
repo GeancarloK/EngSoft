@@ -12,7 +12,6 @@ urlpatterns = [
     path('cadastro/', li.cadastro, name='cadastro'),
 
     ##administradora
-
     path('adm/home/', li.adm_home, name='adm_home'),
     path('adm/meus_condominios/', li.adm_meus_condominios, name='adm_meus_condominios'),
     path('adm/criar_predio/', li.adm_criar_predio, name='adm_criar_predio'),
@@ -24,5 +23,7 @@ urlpatterns = [
     ##moradores
     path('user/home/', li.user_home, name='user_home'),
     
+    ##outros usuarios
     path('not_pessoa/home/', li.not_pessoa_home, name='not_pessoa_home'),
+    
 ]

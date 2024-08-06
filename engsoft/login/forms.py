@@ -165,3 +165,9 @@ class SignUpForm(forms.ModelForm):
         if commit:
             not_pessoa.save()
         return not_pessoa
+
+class RequestForm(forms.Form):
+    condominio = forms.ModelChoiceField(queryset=Condominio.objects.all(), required=True, label="Condomínio")
+    bloco = forms.IntegerField(min_value=1, required=True, label="Bloco")
+    andar = forms.IntegerField(min_value=1, required=True, label="Andar")
+    apt = forms.IntegerField(min_value=1, required=True, label="Apartamento")

@@ -2,13 +2,13 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.models import User
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Construtora, Pessoa, Condominio, NotPessoa
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import views as auth_views
 from . import views
-from .forms import PessoaForm, SignUpForm
+from .forms import PessoaForm, SignUpForm, RequestForm
 import json
 
 
@@ -170,6 +170,7 @@ def user_home(request):
 def not_pessoa_home(request):
     not_pessoa = get_object_or_404(NotPessoa, usuario=request.user)
     condominios = Condominio.objects.all()
+    pendencia = not_pessoa.pendencia
 
     if request.method == 'POST':
         condominio_id = request.POST.get('condominio')
@@ -190,7 +191,7 @@ def not_pessoa_home(request):
                 'not_pessoa': not_pessoa,
                 'condominios': condominios,
                 'error_message': error_message,
-                'pendencia': not_pessoa.pendencia  # Adiciona pendência para exibir
+                'pendencia': pendencia
             })
 
         not_pessoa.pendencia = condominio
@@ -204,8 +205,17 @@ def not_pessoa_home(request):
     return render(request, 'not_pessoa/home.html', {
         'not_pessoa': not_pessoa,
         'condominios': condominios,
-        'pendencia': not_pessoa.pendencia  # Adiciona pendência para exibir
+        'pendencia': pendencia
     })
+
+def detalhes_condominio(request, condominio_id):
+    condominio = get_object_or_404(Condominio, pk=condominio_id)
+    data = {
+        'num_blocos': condominio.num_blocos,
+        'num_andares': condominio.num_andares,
+        'num_apartamentos': condominio.num_apartamentos
+    }
+    return JsonResponse(data)
 
 
 
@@ -228,7 +238,7 @@ def adm_aprovar_morador(request, pk):
             apt=not_pessoa.apt,
         )
         not_pessoa.delete()
-        return redirect('admin_pendentes')  # Redirect to a suitable page
+        return redirect('adm_pendentes') 
 
     return render(request, 'adm/aprovar_morador.html', {'not_pessoa': not_pessoa})
 

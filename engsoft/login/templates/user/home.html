@@ -7,7 +7,7 @@
 <body>
     <div class="container">
         <h1>Bem-vindo, {{ pessoa.nome }}!</h1>
-                        <h5>{{ pessoa.condominio }}, bloco {{ pessoa.bloco }}, {{ pessoa.andar }}º andar, apto. {{ pessoa.apt }}</h5>  
+        <h5>{{ pessoa.condominio }}, bloco {{ pessoa.bloco }}, {{ pessoa.andar }}º andar, apto. {{ pessoa.apt }}</h5>  
     </div>
     <div class="container">
         <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
