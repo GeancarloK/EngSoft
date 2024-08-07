@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pendências</title>
+    <title>Pedidos Pendentes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <h2>Pendências</h2>
-    <ul>
-        {% for not_pessoa in pending_registrations %}
-            <li>{{ not_pessoa.nome }} - <a href="{% url 'adm_aprovar_morador' not_pessoa.pk %}">Approve</a></li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h1>Pedidos Pendentes</h1>
+        {% if pending_registrations %}
+            <ul class="list-group">
+                {% for not_pessoa in pending_registrations %}
+                    <li class="list-group-item">
+                        {{ not_pessoa.nome }} - {{ not_pessoa.pendencia.nome }}
+                        <a href="{% url 'adm_aprovar_morador' not_pessoa.pk %}" class="btn btn-success btn-sm float-right">Aprovar</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nenhum pedido pendente.</p>
+        {% endif %}
+    </div>
 </body>
 </html>

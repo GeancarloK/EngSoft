@@ -8,17 +8,33 @@
             var condominioSelect = document.getElementById('condominio');
             var selectedOption = condominioSelect.options[condominioSelect.selectedIndex];
 
+            var condominioName = selectedOption.textContent || 'N/A';
             var maxBlocos = selectedOption.getAttribute('data-blocos') || 'N/A';
             var maxAndares = selectedOption.getAttribute('data-andares') || 'N/A';
             var maxApt = selectedOption.getAttribute('data-apartamentos') || 'N/A';
 
+            document.getElementById('condominio-name').textContent = condominioName;
             document.getElementById('max_blocos').textContent = maxBlocos;
             document.getElementById('max_andares').textContent = maxAndares;
             document.getElementById('max_apt').textContent = maxApt;
         }
 
         function showDetails() {
-            document.getElementById('details-section').style.display = 'block';
+            var condominioSelect = document.getElementById('condominio');
+            var selectedOption = condominioSelect.options[condominioSelect.selectedIndex];
+
+            if (selectedOption.value) {
+                document.getElementById('condominio-section').style.display = 'none';
+                document.getElementById('details-section').style.display = 'block';
+            } else {
+                alert("Por favor, selecione um condomínio.");
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('condominio-section').style.display = 'block';
+            document.getElementById('details-section').style.display = 'none';
+            document.getElementById('condominio-name').textContent = '';
         }
     </script>
 </head>
@@ -26,10 +42,10 @@
     <div class="container">
         <h1>Requisição de Cadastro para {{ not_pessoa.nome }}</h1>
 
-        {% if not_pessoa.pendencia %}
+        {% if pendencia %}
             <h5>Você tem uma pendência:</h5>
-            <p><strong>Condomínio:</strong> {{ not_pessoa.pendencia.nome }}</p>
-            <p><strong>Imóvel:</strong> {{ not_pessoa.andar }}{{ not_pessoa.apt|stringformat:"02d" }}-{{ not_pessoa.bloco }}</p>
+            <p><strong>Condomínio:</strong> {{ pendencia.nome }}</p>
+            <p><strong>Imóvel:</strong> {{ not_pessoa.andar }}{{ not_pessoa.apt |stringformat:"02d"}}-{{ not_pessoa.bloco }}</p>
         {% else %}
             <h5>Pedido de cadastro no edifício:</h5>
             {% if error_message %}
@@ -38,10 +54,11 @@
                 </div>
             {% endif %}
 
-            <!-- Primeira Parte: Seleção do Condomínio -->
-            <div id="condominio-section">
-                <form id="condominio-form">
-                    {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Primeira Parte: Seleção do Condomínio -->
+                <div id="condominio-section">
                     <div class="form-group">
                         <label for="condominio">Condomínio</label>
                         <select class="form-control" id="condominio" name="condominio" required onchange="updateDetails()">
@@ -52,24 +69,22 @@
                         </select>
                     </div>
                     <button type="button" class="btn btn-primary" onclick="showDetails()">Confirmar Seleção</button>
-                </form>
-            </div>
-
-            <!-- Segunda Parte: Detalhes e Formulário Completo -->
-            <div id="details-section" style="display:none;">
-                <div id="condominio-details" class="mb-3">
-                    <div class="form-group">
-                        <label>Numbero of Blocks: <span id="max_blocos">N/A</span></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Number of Floors: <span id="max_andares">N/A</span></label>
-                    </div>
-                    <div class="form-group">
-                        <label>Number of Apartments: <span id="max_apt">N/A</span></label>
-                    </div>
                 </div>
-                <form method="post">
-                    {% csrf_token %}
+
+                <!-- Segunda Parte: Detalhes e Formulário Completo -->
+                <div id="details-section" style="display:none;">
+                    <h4>Condomínio Selecionado: <span id="condominio-name"></span></h4>
+                    <div id="condominio-details" class="mb-3">
+                        <div class="form-group">
+                            <label>Número de Blocos: <span id="max_blocos">N/A</span></label>
+                        </div>
+                        <div class="form-group">
+                            <label>Número de Andares: <span id="max_andares">N/A</span></label>
+                        </div>
+                        <div class="form-group">
+                            <label>Número de Apartamentos: <span id="max_apt">N/A</span></label>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="bloco">Bloco</label>
                         <input type="number" class="form-control" id="bloco" name="bloco" min="1" required>
@@ -83,8 +98,9 @@
                         <input type="number" class="form-control" id="apt" name="apt" min="1" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Enviar Pedido</button>
-                </form>
-            </div>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Alterar Condomínio</button>
+                </div>
+            </form>
         {% endif %}
     </div>
     <div class="container">

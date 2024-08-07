@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Aprovar Moradores</title>
+    <title>Aprovar Morador</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <h2>Aprovar <b>{{ not_pessoa.nome }}</b> como morador.</h2>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Aprovar</button>
-    </form>
+    <div class="container">
+        <h1>Aprovar Morador</h1>
+        <p><strong>Nome:</strong> {{ not_pessoa.nome }}</p>
+        <p><strong>Email:</strong> {{ not_pessoa.email }}</p>
+        <p><strong>CPF:</strong> {{ not_pessoa.cpf }}</p>
+        <p><strong>Condomínio:</strong> {{ not_pessoa.pendencia.nome }}</p>
+        <p><strong>Bloco:</strong> {{ not_pessoa.bloco }}</p>
+        <p><strong>Andar:</strong> {{ not_pessoa.andar }}</p>
+        <p><strong>Apartamento:</strong> {{ not_pessoa.apt }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Aprovar</button>
+            <a href="{% url 'adm_pendentes' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
 </body>
 </html>

@@ -170,15 +170,34 @@ def user_home(request):
 def not_pessoa_home(request):
     not_pessoa = get_object_or_404(NotPessoa, usuario=request.user)
     condominios = Condominio.objects.all()
-    pendencia = not_pessoa.pendencia
 
     if request.method == 'POST':
+        print(request.POST)
         condominio_id = request.POST.get('condominio')
+        print(f"Condomínio ID: {condominio_id}")
+        if not condominio_id:
+            error_message = "Por favor, selecione um condomínio."
+            return render(request, 'not_pessoa/home.html', {
+                'not_pessoa': not_pessoa,
+                'condominios': condominios,
+                'error_message': error_message,
+                'pendencia': not_pessoa.pendencia 
+            })
+
         bloco = request.POST.get('bloco')
         andar = request.POST.get('andar')
         apt = request.POST.get('apt')
 
-        condominio = get_object_or_404(Condominio, id=condominio_id)
+        try:
+            condominio = Condominio.objects.get(id=condominio_id)
+        except Condominio.DoesNotExist:
+            error_message = "Condomínio selecionado não encontrado."
+            return render(request, 'not_pessoa/home.html', {
+                'not_pessoa': not_pessoa,
+                'condominios': condominios,
+                'error_message': error_message,
+                'pendencia': not_pessoa.pendencia 
+            })
 
         # Validar bloco, andar e apartamento
         max_blocos = condominio.nro_blocos
@@ -191,7 +210,7 @@ def not_pessoa_home(request):
                 'not_pessoa': not_pessoa,
                 'condominios': condominios,
                 'error_message': error_message,
-                'pendencia': pendencia
+                'pendencia': not_pessoa.pendencia
             })
 
         not_pessoa.pendencia = condominio
@@ -200,12 +219,12 @@ def not_pessoa_home(request):
         not_pessoa.apt = apt
         not_pessoa.save()
 
-        return redirect('user_home')
+        return redirect('not_pessoa_home')
 
     return render(request, 'not_pessoa/home.html', {
         'not_pessoa': not_pessoa,
         'condominios': condominios,
-        'pendencia': pendencia
+        'pendencia': not_pessoa.pendencia
     })
 
 def detalhes_condominio(request, condominio_id):
@@ -224,7 +243,16 @@ def detalhes_condominio(request, condominio_id):
 
 
 
+### APROVAÇÃO
+@login_required
+def adm_pendentes(request):
+    construtora = get_object_or_404(Construtora, administrador=request.user)
+    # Filtrar os NotPessoas cujos condomínios pertencem à construtora do administrador
+    pending_registrations = NotPessoa.objects.filter(pendencia__construtora=construtora)
 
+    return render(request, 'adm/pendentes.html', {'pending_registrations': pending_registrations})
+
+@login_required
 def adm_aprovar_morador(request, pk):
     not_pessoa = get_object_or_404(NotPessoa, pk=pk)
     if request.method == 'POST':
@@ -236,12 +264,10 @@ def adm_aprovar_morador(request, pk):
             bloco=not_pessoa.bloco,
             andar=not_pessoa.andar,
             apt=not_pessoa.apt,
+            condominio=not_pessoa.pendencia,
+            sindico=False 
         )
         not_pessoa.delete()
-        return redirect('adm_pendentes') 
+        return redirect('adm_pendentes')
 
     return render(request, 'adm/aprovar_morador.html', {'not_pessoa': not_pessoa})
-
-def adm_pendentes(request):
-    pending_registrations = NotPessoa.objects.all()
-    return render(request, 'adm/pendentes.html', {'pending_registrations': pending_registrations})
