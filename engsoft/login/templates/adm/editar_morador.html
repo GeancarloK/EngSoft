@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Membro</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Editar {{ pessoa.nome }}</h1>
+    </div>
+    <div class="container">
+        <h2>Informações Atuais</h2>
+        <p><strong>Nome:</strong> {{ pessoa.nome }}</p>
+        <p><strong>Email:</strong> {{ pessoa.email }}</p>
+        <p><strong>CPF:</strong> {{ pessoa.cpf }}</p>
+        <p><strong>Condomínio:</strong> {{ pessoa.condominio }}</p>
+        <p><strong>Bloco:</strong> {{ pessoa.bloco }}</p>
+        <p><strong>Andar:</strong> {{ pessoa.andar }}</p>
+        <p><strong>Apartamento:</strong> {{ pessoa.apt }}</p>
+    </div>
+    <div class="container">
+        <h4>Editar Informações</h4>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.bloco.label_tag }} {{ form.bloco }}
+            </div>
+            <div class="form-group">
+                {{ form.andar.label_tag }} {{ form.andar }}
+            </div>
+            <div class="form-group">
+                {{ form.apt.label_tag }} {{ form.apt }}
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </form>
+        <a href="{% url 'adm_lista_moradores' %}" class="btn btn-secondary mb-4">Voltar</a>
+    </div>
+</body>
+</html>

@@ -7,12 +7,26 @@
 <body>
     <div class="container">
         <h1>Pedidos Pendentes</h1>
+        
+        {% if messages %}
+            <div class="alert-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if pending_registrations %}
             <ul class="list-group">
                 {% for not_pessoa in pending_registrations %}
                     <li class="list-group-item">
                         {{ not_pessoa.nome }} - {{ not_pessoa.pendencia.nome }}
-                        <a href="{% url 'adm_aprovar_morador' not_pessoa.pk %}" class="btn btn-success btn-sm float-right">Aprovar</a>
+                        <a href="{% url 'adm_gerenciar_morador' not_pessoa.pk %}" class="btn btn-primary btn-sm float-right">Aprovar</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -20,5 +34,10 @@
             <p>Nenhum pedido pendente.</p>
         {% endif %}
     </div>
+
+    <!-- Bootstrap JS (for alert dismiss) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

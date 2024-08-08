@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth import login as auth_login, update_session_auth_hash, get_user_model
 from django.contrib.auth import logout
 #from django.contrib.auth.models import User
@@ -11,7 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.urls import reverse
 from urllib.parse import urlencode
 from . import views
-from .forms import PessoaForm, SignUpForm, ProfileUpdateForm
+from .forms import PessoaForm, SignUpForm, ProfileUpdateForm, AdmMoradorForm
 #import json
 
 User = get_user_model()
@@ -193,6 +194,34 @@ def adm_criar_pessoa(request):
 
     return render(request, 'adm/criar_pessoa.html', {'form': form})
 
+@login_required
+def adm_lista_moradores(request):
+    construtora = Construtora.objects.get(administrador=request.user)
+    condominios = Condominio.objects.filter(construtora=construtora)
+    
+    context = {}
+    for condominio in condominios:
+        pessoas = Pessoa.objects.filter(condominio=condominio).order_by('nome')
+        context[condominio] = pessoas
+
+    return render(request, 'adm/lista_moradores.html', {'context': context})
+
+@login_required
+def adm_editar_morador(request, usuario_id):
+    pessoa = get_object_or_404(Pessoa, id=usuario_id)
+    
+    if request.method == 'POST':
+        form = AdmMoradorForm(request.POST, instance=pessoa)
+        if form.is_valid():
+            form.save()
+    else:
+        form = AdmMoradorForm(instance=pessoa)
+    
+    return render(request, 'adm/editar_morador.html', {'form': form, 'pessoa': pessoa})
+
+
+
+
 
 
 
@@ -323,21 +352,30 @@ def adm_pendentes(request):
     return render(request, 'adm/pendentes.html', {'pending_registrations': pending_registrations})
 
 @login_required
-def adm_aprovar_morador(request, pk):
+def adm_gerenciar_morador(request, pk):
     not_pessoa = get_object_or_404(NotPessoa, pk=pk)
+    
     if request.method == 'POST':
-        Pessoa.objects.create(
-            usuario=not_pessoa.usuario,
-            nome=not_pessoa.nome,
-            email=not_pessoa.email,
-            cpf=not_pessoa.cpf,
-            bloco=not_pessoa.bloco,
-            andar=not_pessoa.andar,
-            apt=not_pessoa.apt,
-            condominio=not_pessoa.pendencia,
-            sindico=False 
-        )
-        not_pessoa.delete()
-        return redirect('adm_pendentes')
+        if 'aprovar' in request.POST:
+            Pessoa.objects.create(
+                usuario=not_pessoa.usuario,
+                nome=not_pessoa.nome,
+                email=not_pessoa.email,
+                cpf=not_pessoa.cpf,
+                bloco=not_pessoa.bloco,
+                andar=not_pessoa.andar,
+                apt=not_pessoa.apt,
+                condominio=not_pessoa.pendencia,
+                sindico=False 
+            )
+            not_pessoa.delete()
+            messages.success(request, f'O morador {not_pessoa.nome} foi aprovado com sucesso.')
+            return redirect('adm_pendentes')
 
-    return render(request, 'adm/aprovar_morador.html', {'not_pessoa': not_pessoa})
+        if 'negar' in request.POST:
+            not_pessoa.pendencia = None
+            not_pessoa.save()
+            messages.info(request, f'A requisição de {not_pessoa.nome} foi negada.')
+            return redirect('adm_pendentes')
+    
+    return render(request, 'adm/gerenciar_conta.html', {'not_pessoa': not_pessoa})

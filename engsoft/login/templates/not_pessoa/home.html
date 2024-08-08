@@ -56,6 +56,13 @@
             <p><strong>Condomínio:</strong> {{ pendencia.nome }}</p>
             <p><strong>Imóvel:</strong> {{ not_pessoa.andar }}{{ not_pessoa.apt |stringformat:"02d"}}-{{ not_pessoa.bloco }}</p>
         {% else %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
             <h5>Pedido de cadastro no edifício:</h5>
             {% if error_message %}
                 <div class="alert alert-danger" role="alert">

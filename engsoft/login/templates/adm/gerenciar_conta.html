@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Aprovar Morador</title>
+    <title>Gerenciar Conta de Morador</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
@@ -14,11 +14,18 @@
         <p><strong>Bloco:</strong> {{ not_pessoa.bloco }}</p>
         <p><strong>Andar:</strong> {{ not_pessoa.andar }}</p>
         <p><strong>Apartamento:</strong> {{ not_pessoa.apt }}</p>
-        <form method="post">
+        
+        <form method="post" action="{% url 'adm_gerenciar_morador' not_pessoa.pk %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Aprovar</button>
-            <a href="{% url 'adm_pendentes' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" name="aprovar" class="btn btn-primary">Aprovar</button>
         </form>
+        
+        <form method="post" action="{% url 'adm_gerenciar_morador' not_pessoa.pk %}">
+            {% csrf_token %}
+            <button type="submit" name="negar" class="btn btn-danger">Negar Requisição</button>
+        </form>
+        
+        <a href="{% url 'adm_pendentes' %}" class="btn btn-secondary">Cancelar</a>
     </div>
 </body>
 </html>

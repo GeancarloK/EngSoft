@@ -196,3 +196,13 @@ class ProfileUpdateForm(forms.Form):
             if current_password and new_password == current_password:
                 raise ValidationError("A nova senha não pode ser igual à senha atual.")
         return cleaned_data
+    
+class AdmMoradorForm(forms.ModelForm):
+    class Meta:
+        model = Pessoa
+        fields = ['bloco', 'andar', 'apt']
+    
+    def __init__(self, *args, **kwargs):
+        super(AdmMoradorForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})

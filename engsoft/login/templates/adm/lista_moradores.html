@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Moradores</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Usuários por Condomínio</h1>
+        
+        {% for condominio, pessoas in context.items %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h2 class="mb-0">Condomínio: {{ condominio }}</h2>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for pessoa in pessoas %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Nome:</strong> {{ pessoa.nome }}<br>
+                                <strong>Bloco:</strong> {{ pessoa.bloco }}<br>
+                                <strong>Andar:</strong> {{ pessoa.andar }}<br>
+                                <strong>Apt:</strong> {{ pessoa.apt }}
+                            </div>
+                            <a href="{% url 'adm_editar_morador' pessoa.id %}" class="btn btn-primary btn-sm">Editar</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

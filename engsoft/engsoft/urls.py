@@ -10,8 +10,10 @@ urlpatterns = [
     path('login/', li.login, name='login'),
     path('logout/', li.logoff, name='logout'),
     path('cadastro/', li.cadastro, name='cadastro'),
-    path('login/redirect/', li.user_home_redirect, name='user_home_redirect'),
+    
+    ##perfil do usuario
     path('editar_perfil/', li.editar_perfil, name='editar_perfil'),
+    path('redirect/', li.user_home_redirect, name='user_home_redirect'),
 
     ##administradora
     path('adm/home/', li.adm_home, name='adm_home'),
@@ -20,7 +22,9 @@ urlpatterns = [
     path('adm/condominio/<int:condominio_id>/', li.adm_detalhes_condominio, name='adm_detalhes_condominio'),
     path('adm/morador/<int:morador_id>/', li.adm_detalhes_morador, name='adm_detalhes_morador'),
     path('adm/pendentes/', li.adm_pendentes, name='adm_pendentes'),
-    path('adm/aprovar_morador/<int:pk>/', li.adm_aprovar_morador, name='adm_aprovar_morador'),
+    path('adm/gerenciar_conta/<int:pk>/', li.adm_gerenciar_morador, name='adm_gerenciar_morador'),
+    path('adm/moradores/', li.adm_lista_moradores, name='adm_lista_moradores'),
+    path('adm/moradores/editar/<int:usuario_id>/', li.adm_editar_morador, name='adm_editar_morador'),
     
     ##moradores
     path('user/home/', li.user_home, name='user_home'),
