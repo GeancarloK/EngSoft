@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from .models import Pessoa, NotPessoa, Condominio
@@ -171,3 +171,28 @@ class RequestForm(forms.Form):
     bloco = forms.IntegerField(min_value=1, required=True, label="Bloco")
     andar = forms.IntegerField(min_value=1, required=True, label="Andar")
     apt = forms.IntegerField(min_value=1, required=True, label="Apartamento")
+
+class ProfileUpdateForm(forms.Form):
+    name = forms.CharField(max_length=200, required=True)
+    email = forms.EmailField(max_length=200, required=True)
+    cpf = forms.CharField(max_length=11, required=True)
+    current_password = forms.CharField(widget=forms.PasswordInput, required=True)
+    new_password = forms.CharField(widget=forms.PasswordInput, required=False)
+    confirm_password = forms.CharField(widget=forms.PasswordInput, required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get("new_password")
+        confirm_password = cleaned_data.get("confirm_password")
+        current_password = cleaned_data.get("current_password")
+
+        # Validate password
+        if new_password and confirm_password:
+            if new_password != confirm_password:
+                raise ValidationError("As senhas novas não coincidem.")
+            if len(new_password) < 8 or not any(char.isdigit() for char in new_password):
+                raise ValidationError("A nova senha deve ter pelo menos 8 caracteres e conter pelo menos 2 dígitos.")
+            # Check if new password is different from old password
+            if current_password and new_password == current_password:
+                raise ValidationError("A nova senha não pode ser igual à senha atual.")
+        return cleaned_data

@@ -1,36 +1,100 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth import login as auth_login, authenticate
-from django.contrib.auth.models import User
-from django.views import View
-from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import login as auth_login, update_session_auth_hash, get_user_model
+from django.contrib.auth import logout
+#from django.contrib.auth.models import User
+#from django.views import View
+from django.http import HttpResponseRedirect, JsonResponse
 from .models import Construtora, Pessoa, Condominio, NotPessoa
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import views as auth_views
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+#from django.contrib.auth import views as auth_views
+from django.urls import reverse
+from urllib.parse import urlencode
 from . import views
-from .forms import PessoaForm, SignUpForm, RequestForm
-import json
+from .forms import PessoaForm, SignUpForm, ProfileUpdateForm
+#import json
 
+User = get_user_model()
 
 def index(request):
     return render(request, 'index.html')
 
 @login_required
 def logoff(request):
-    auth_views.LogoutView.as_view()
-    return redirect(index)
+    logout(request)
+    return redirect('index')
 
 def cadastro(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')  
-        else:
-            print(form.errors) #debug
+            user = form.save()
+            # Após o cadastro, faça login do usuário e redirecione
+            auth_login(request, user.usuario)
+
+            query_params = urlencode({'message': 'Usuário criado com sucesso'})
+            return redirect(f"{reverse('user_home_redirect')}?{query_params}")
     else:
         form = SignUpForm()
     return render(request, 'cadastro.html', {'form': form})
+
+@login_required
+def editar_perfil(request):
+    user = request.user
+    if hasattr(user, 'pessoa'):
+        user_model = user.pessoa
+    elif hasattr(user, 'notpessoa'):
+        user_model = user.notpessoa
+    else:
+        return redirect('logoff')
+
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST)
+        if form.is_valid():
+            current_password = form.cleaned_data['current_password']
+            new_password = form.cleaned_data['new_password']
+
+            # Check current password
+            if not user.check_password(current_password):
+                form.add_error('current_password', 'Senha atual incorreta.')
+            else:
+                # Update user details
+                user_model.nome = form.cleaned_data['name']
+                user_model.email = form.cleaned_data['email']
+                user_model.cpf = form.cleaned_data['cpf']
+
+                if new_password:
+                    user.set_password(new_password)
+                    update_session_auth_hash(request, user)
+
+                user_model.save()
+                # Construir a URL com parâmetros
+                query_params = urlencode({'message': 'Perfil atualizado com sucesso'})
+                return redirect(f"{reverse('user_home_redirect')}?{query_params}")
+    else:
+        form = ProfileUpdateForm(initial={
+            'name': user_model.nome,
+            'email': user_model.email,
+            'cpf': user_model.cpf
+        })
+
+    return render(request, 'editar_perfil.html', {'form': form})
+
+def user_home_redirect(request):
+    message = request.GET.get('message', '')
+
+    if message == 'Usuário criado com sucesso':
+        redirect_url = 'login'
+    else:
+        redirect_url = choose_home(request.user) 
+
+    if redirect_url == 'logoff':
+        return redirect('logoff')
+
+    return render(request, 'user_home_redirect.html', {
+        'message': message,
+        'redirect_url': redirect_url
+    })
 
 ### ADMINISTRADORA
 
@@ -143,19 +207,25 @@ def login(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-
-            # Verifica se o usuário está associado a uma construtora
-            if Construtora.objects.filter(administrador=user).exists():
-                return redirect('adm_home')
-            # Verifica se o usuário está associado a um objeto Pessoa
-            elif Pessoa.objects.filter(usuario=user).exists():
-                return redirect('user_home')
-            # Verifica se o usuário está associado a um objeto NotPessoa
-            else:
-                return redirect('not_pessoa_home')
+            redirect_url = choose_home(user)
+            return redirect(redirect_url)
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
+
+def choose_home(user):
+    if Construtora.objects.filter(administrador=user).exists():
+        return 'adm_home'
+    try:
+        pessoa = Pessoa.objects.get(usuario=user)
+        if pessoa.condominio:
+            return 'user_home'
+    except Pessoa.DoesNotExist:
+        pass
+    if NotPessoa.objects.filter(usuario=user).exists():
+        return 'not_pessoa_home'
+    
+    return 'logoff'
 
 @login_required
 def user_home(request):

@@ -10,6 +10,8 @@ urlpatterns = [
     path('login/', li.login, name='login'),
     path('logout/', li.logoff, name='logout'),
     path('cadastro/', li.cadastro, name='cadastro'),
+    path('login/redirect/', li.user_home_redirect, name='user_home_redirect'),
+    path('editar_perfil/', li.editar_perfil, name='editar_perfil'),
 
     ##administradora
     path('adm/home/', li.adm_home, name='adm_home'),

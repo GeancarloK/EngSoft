@@ -40,6 +40,15 @@
 </head>
 <body>
     <div class="container">
+        <h1>Bem-vindo, {{ not_pessoa.nome }}!</h1>
+    </div>
+    <div class="container">
+        <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+    </div>
+    <div class="container">
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+    <div class="container">
         <h1>Requisição de Cadastro para {{ not_pessoa.nome }}</h1>
 
         {% if pendencia %}
@@ -102,9 +111,6 @@
                 </div>
             </form>
         {% endif %}
-    </div>
-    <div class="container">
-        <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
     </div>
 </body>
 </html>
