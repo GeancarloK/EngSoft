@@ -7,11 +7,11 @@ class Assembleia(models.Model):
         ('criada', 'Criada'),
         ('iniciada', 'Iniciada'),
         ('finalizada', 'Finalizada'),
+        ('entregue', 'Entregue'),
     ]
     
-    condominio = models.ForeignKey(Condominio, on_delete=models.CASCADE)
+    condominio = models.ForeignKey(Condominio, on_delete=models.CASCADE) 
     titulo = models.CharField(max_length=200)
-    descricao = models.TextField()
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_inicio = models.DateTimeField(null=True, blank=True)
     data_finalizacao = models.DateTimeField(null=True, blank=True)
@@ -21,31 +21,47 @@ class Assembleia(models.Model):
     def __str__(self):
         return self.titulo
 
-class Pauta(models.Model):
-    assembleia = models.ForeignKey(Assembleia, on_delete=models.CASCADE, related_name='pautas')
+class Requisicao(models.Model):
     titulo = models.CharField(max_length=200)
-    descricao = models.TextField()
+    descricao = models.CharField(max_length=2000)
+    assembleia = models.ForeignKey(Assembleia, on_delete=models.CASCADE, related_name='requisicoes')
     data_criacao = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.titulo
 
-class Votacao(models.Model):
-    pauta = models.ForeignKey(Pauta, on_delete=models.CASCADE, related_name='votacoes')
-    voto_sim = models.IntegerField(default=0)
-    voto_nao = models.IntegerField(default=0)
-    voto_abstencao = models.IntegerField(default=0)
-
-    def total_votos(self):
-        return self.voto_sim + self.voto_nao + self.voto_abstencao
+class OpcaoVotacao(models.Model):
+    titulo = models.CharField(max_length=200)
+    votacao = models.ForeignKey('Votacao', on_delete=models.CASCADE, related_name='opcoes_votacao')
+    votos = models.IntegerField(default=0)  
 
     def __str__(self):
-        return f"Votação para {self.pauta.titulo}"
+        return self.titulo
+
+class Votacao(models.Model):
+    titulo = models.CharField(max_length=200)
+    assembleia = models.ForeignKey(Assembleia, on_delete=models.CASCADE, related_name='votos')
+    opcoes = models.ManyToManyField(OpcaoVotacao, related_name='votacoes')
+
+    def __str__(self):
+        return self.titulo
+
+class Voto(models.Model):
+    votacao = models.ForeignKey(Votacao, on_delete=models.CASCADE, related_name='votos')
+    morador = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
+    opcao = models.ForeignKey(OpcaoVotacao, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('votacao', 'morador')
+
+    def __str__(self):
+        return f"{self.morador} votou em {self.opcao.titulo} na votação {self.votacao.titulo}"
 
 class Registro(models.Model):
     assembleia = models.ForeignKey(Assembleia, on_delete=models.CASCADE, related_name='registros')
     resumo = models.TextField()
-    data_criacao = models.DateTimeField(auto_now_add=True)
+    data_criacao = models.DateTimeField(null=True, blank=True)
+    data_finalizacao = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Registro de {self.assembleia.titulo}"

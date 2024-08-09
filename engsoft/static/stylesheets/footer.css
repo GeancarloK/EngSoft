@@ -1,6 +1,9 @@
+/* import main CSS file*/
+@import "styles.css";
+
 .footer {
     padding: 2vh 5vw;
-    background-color: var(--SEF-darkblue);
+    background-color: var(--blue);
     color: white;
     width: 100%;
     text-align: center;

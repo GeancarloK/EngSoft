@@ -1,3 +1,6 @@
+/* import main CSS file*/
+@import "styles.css";
+
 a.alert {
     background-color: var(--SEF-orange);
     border-color: var(--SEF-orange);
@@ -9,7 +12,7 @@ a.alert:hover {
 }
 
 .header-login {
-    background-color: var(--SEF-darkblue);
+    background-color: var(--blue);
     height: 90px;
     width: 100vw;
 }

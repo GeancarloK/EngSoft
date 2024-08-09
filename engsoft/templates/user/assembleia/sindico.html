@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Assembleias</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <h1>Assembleias</h1>
+
+    {% if assembleias %}
+        <ul>
+        {% for assembleia in assembleias %}
+            <li>
+                <h3>{{ assembleia.titulo }} - Status: {{ assembleia.get_status_display }}</h3>
+                <p>{{ assembleia.descricao }}</p>
+
+                {% if assembleia.status == 'criada' %}
+                    <form method="post" action="{% url 'iniciar_assembleia' assembleia.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Iniciar</button>
+                    </form>
+                {% elif assembleia.status == 'iniciada' %}
+                    <p>Requisições:</p>
+                    <ul>
+                    {% for requisicao in assembleia.requisicoes.all %}
+                        <li>{{ requisicao.titulo }} - {{ requisicao.descricao }}</li>
+                    {% endfor %}
+                    </ul>
+                    
+                    <p>Resultados Parciais:</p>
+                    <ul>
+                    {% for votacao in assembleia.votos.all %}
+                        <li>{{ votacao.titulo }}</li>
+                        <ul>
+                        {% for opcao in votacao.opcoes_votacao.all %}
+                            <li>{{ opcao.titulo }}: {{ opcao.votos }} votos</li>
+                        {% endfor %}
+                        </ul>
+                    {% endfor %}
+                    </ul>
+                    
+                    <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Finalizar</button>
+                    </form>
+                    <form method="get" action="{% url 'criar_votacao' assembleia.id %}">
+                        <button type="submit">Criar Nova Votação</button>
+                    </form>
+                {% elif assembleia.status == 'finalizada' %}
+                    <form method="post" action="{% url 'entregar_assembleia' assembleia.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Entregar</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Não há assembleias acontecendo no momento.</p>
+    {% endif %}
+</body>
+</html>

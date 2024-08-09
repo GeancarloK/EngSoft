@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+    <title>Assembléias</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Assembléias</h1>
+
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div>
+            <a href="{% url 'adm_criar_assembleia' %}" class="btn btn-primary">Criar Nova Assembleia</a>
+            <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary ml-2">Voltar</a>
+        </div>
+        
+        {% if assembleias %}
+            <ul class="list-group">
+            {% for assembleia in assembleias %}
+                <li class="list-group-item">
+                    <h3>{{ assembleia.condominio.nome }} - {{ assembleia.titulo }} - Status: {{ assembleia.get_status_display }}</h3>
+                    
+                    {% if assembleia.status == 'criada' %}
+                        <p><strong>Esperando início por síndico</strong></p>
+                    {% elif assembleia.status == 'iniciada' or assembleia.status == 'finalizada' %}
+                        <p><strong>Em andamento</strong></p>
+                    {% elif assembleia.status == 'entregue' %}
+                        {% if assembleia.registros.exists %}
+                            {% for registro in assembleia.registros.all %}
+                                <p><strong>Resumo:</strong><br>{{ registro.resumo }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Não há assembleias para exibir.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

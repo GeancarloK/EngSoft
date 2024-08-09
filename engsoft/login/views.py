@@ -13,9 +13,14 @@ from django.urls import reverse
 from urllib.parse import urlencode
 from . import views
 from .forms import PessoaForm, SignUpForm, ProfileUpdateForm, AdmMoradorForm
+from assembleia.models import Assembleia
+
 #import json
 
 User = get_user_model()
+
+def prototipo(request):
+    return render(request, 'prototipo.html')
 
 def index(request):
     return render(request, 'index.html')
@@ -263,7 +268,18 @@ def user_home(request):
     except Pessoa.DoesNotExist:
         pessoa = None
 
-    return render(request, 'user/home.html', {'pessoa': pessoa})
+    if pessoa:
+        # Verifica se há assembleia iniciada no condomínio do morador
+        assembleia_iniciada = Assembleia.objects.filter(
+            condominio=pessoa.condominio, status='iniciada'
+        ).first()  # Pega o primeiro objeto ou None
+    else:
+        assembleia_iniciada = None
+
+    return render(request, 'user/home.html', {
+        'pessoa': pessoa,
+        'assembleia_iniciada': assembleia_iniciada,
+    })
 
 @login_required
 def not_pessoa_home(request):
@@ -334,8 +350,6 @@ def detalhes_condominio(request, condominio_id):
         'num_apartamentos': condominio.num_apartamentos
     }
     return JsonResponse(data)
-
-
 
 
 

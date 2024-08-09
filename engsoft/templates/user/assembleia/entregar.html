@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Entregar Assembleia</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Entregar Assembleia - {{ assembleia.titulo }}</h2>
+        <p><strong>Descrição:</strong> {{ assembleia.descricao }}</p>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="resumo">Resumo da Assembleia</label>
+                <textarea class="form-control" id="resumo" name="resumo" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Entregar Assembleia</button>
+        </form>
+    </div>
+</body>
+</html>

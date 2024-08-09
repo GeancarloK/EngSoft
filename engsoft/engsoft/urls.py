@@ -7,6 +7,9 @@ from assembleia import views as bl
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    ##temporário
+    path('prototipo/', li.prototipo, name='prototipo'),
+
     path('', li.index, name='index'),
     path('login/', li.login, name='login'),
     path('logout/', li.logoff, name='logout'),
@@ -26,10 +29,21 @@ urlpatterns = [
     path('adm/gerenciar_conta/<int:pk>/', li.adm_gerenciar_morador, name='adm_gerenciar_morador'),
     path('adm/moradores/', li.adm_lista_moradores, name='adm_lista_moradores'),
     path('adm/moradores/editar/<int:usuario_id>/', li.adm_editar_morador, name='adm_editar_morador'),
+    path('adm/assembleia/', bl.home_assembleias, name='home_assembleias'),
     path('adm/assembleia/criar/', bl.adm_criar_assembleia, name='adm_criar_assembleia'),
     
     ##moradores
     path('user/home/', li.user_home, name='user_home'),
+    path('user/assembleias/', bl.user_assembleias, name='user_assembleias'),
+    path('user/assembleias/votar/', bl.user_votar, name='user_votar'),
+
+    ##sindico
+    path('user/assembleia/sindico/', bl.sindico_assembleias, name='sindico_assembleias'),
+    path('user/assembleia/iniciar/<int:assembleia_id>/', bl.iniciar_assembleia, name='iniciar_assembleia'),
+    path('user/assembleia/finalizar/<int:assembleia_id>/', bl.finalizar_assembleia, name='finalizar_assembleia'),
+    path('user/assembleia/entregar/<int:assembleia_id>/', bl.entregar_assembleia, name='entregar_assembleia'),
+    path('user/assembleia/votacao/criar/<int:assembleia_id>/', bl.criar_votacao, name='criar_votacao'),
+    path('user/entrar_assembleia/<int:assembleia_id>/', bl.entrar_assembleia, name='entrar_assembleia'),
     
     ##outros usuarios
     path('not_pessoa/home/', li.not_pessoa_home, name='not_pessoa_home'),

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Votação</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script>
+        function adicionarOpcao() {
+            var container = document.getElementById("opcoes-container");
+            var input = document.createElement("input");
+            input.type = "text";
+            input.name = "opcao";
+            input.className = "form-control";
+            input.placeholder = "Nova opção";
+            container.appendChild(input);
+        }
+    </script>
+</head>
+<body>
+    <h1>Criar Votação para a Assembleia: {{ assembleia.titulo }}</h1>
+
+    {% if error_message %}
+        <div class="alert alert-danger">{{ error_message }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="titulo">Título da Votação:</label>
+            <input type="text" id="titulo" name="titulo" class="form-control" required>
+        </div>
+
+        <div id="opcoes-container" class="form-group">
+            <label>Opções:</label>
+            <input type="text" name="opcao" class="form-control" placeholder="Opção 1" required>
+            <input type="text" name="opcao" class="form-control" placeholder="Opção 2" required>
+        </div>
+
+        <button type="button" class="btn btn-secondary" onclick="adicionarOpcao()">Adicionar Opção</button>
+        <br><br>
+        <button type="submit" class="btn btn-primary">Criar Votação</button>
+    </form>
+</body>
+</html>

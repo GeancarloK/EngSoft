@@ -5,10 +5,9 @@ from login.models import Construtora, Condominio
 class AssembleiaForm(forms.ModelForm):
     class Meta:
         model = Assembleia
-        fields = ['condominio','titulo', 'descricao']
+        fields = ['condominio','titulo']
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
