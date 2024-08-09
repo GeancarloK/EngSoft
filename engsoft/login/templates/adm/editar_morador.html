@@ -19,18 +19,58 @@
         <p><strong>Apartamento:</strong> {{ pessoa.apt }}</p>
     </div>
     <div class="container">
+        {% if messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+    <div class="container">
         <h4>Editar Informações</h4>
         <form method="post">
             {% csrf_token %}
+            
             <div class="form-group">
-                {{ form.bloco.label_tag }} {{ form.bloco }}
+                <label for="bloco">{{ form.bloco.label }}</label>
+                <input type="text" class="form-control {% if form.bloco.errors %}is-invalid{% endif %}" id="bloco" name="bloco" value="{{ form.bloco.value }}" placeholder="Digite o bloco">
+                {% if form.bloco.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.bloco.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+            
             <div class="form-group">
-                {{ form.andar.label_tag }} {{ form.andar }}
+                <label for="andar">{{ form.andar.label }}</label>
+                <input type="text" class="form-control {% if form.andar.errors %}is-invalid{% endif %}" id="andar" name="andar" value="{{ form.andar.value }}" placeholder="Digite o andar">
+                {% if form.andar.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.andar.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+            
             <div class="form-group">
-                {{ form.apt.label_tag }} {{ form.apt }}
+                <label for="apt">{{ form.apt.label }}</label>
+                <input type="text" class="form-control {% if form.apt.errors %}is-invalid{% endif %}" id="apt" name="apt" value="{{ form.apt.value }}" placeholder="Digite o apartamento">
+                {% if form.apt.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.apt.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+            
             <button type="submit" class="btn btn-primary">Salvar</button>
         </form>
         <a href="{% url 'adm_lista_moradores' %}" class="btn btn-secondary mb-4">Voltar</a>

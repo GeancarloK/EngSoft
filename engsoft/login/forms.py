@@ -116,8 +116,14 @@ class NotPessoaForm(forms.ModelForm):
 # Formulário de Cadastro
 class SignUpForm(forms.ModelForm):
     username = forms.CharField(label='Usuário', required=True)
-    email = forms.EmailField(label='E-mail')
-    email2 = forms.EmailField(label='Confirmar E-mail')
+    email = forms.EmailField(
+        label='E-mail',
+        widget=forms.EmailInput(attrs={'placeholder': 'nome@email.com'})
+    )
+    email2 = forms.EmailField(
+        label='Confirmar E-mail',
+        widget=forms.EmailInput(attrs={'placeholder': 'nome@email.com'})
+    )
     password = forms.CharField(label='Senha', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Confirmar Senha', widget=forms.PasswordInput, required=True)
 
@@ -143,13 +149,13 @@ class SignUpForm(forms.ModelForm):
         password = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('password2')
         if not password or not password2:
-            raise forms.ValidationError("Deve haver uma senha")
+            raise forms.ValidationError("As senhas devem ser preenchidas")
         if password != password2:
             raise forms.ValidationError("As senhas não são iguais")
         if len(password) < 8:
-            raise forms.ValidationError("A senha deve ter 8 caracteres no mínimo")
+            raise forms.ValidationError("A senha deve ter pelo menos 8 caracteres")
         if len(re.findall(r'\d', password)) < 2:
-            raise forms.ValidationError("A senha deve ter pelo menos 2 números")
+            raise forms.ValidationError("A senha deve conter pelo menos 2 números")
         return password2
 
     def clean_username(self):
@@ -201,8 +207,36 @@ class AdmMoradorForm(forms.ModelForm):
     class Meta:
         model = Pessoa
         fields = ['bloco', 'andar', 'apt']
+        widgets = {
+            'bloco': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Bloco'}),
+            'andar': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Andar'}),
+            'apt': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Apto'}),
+        }
     
     def __init__(self, *args, **kwargs):
         super(AdmMoradorForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+            if not field.widget.attrs.get('placeholder'):
+                field.widget.attrs['placeholder'] = field.label
+    
+    def clean_bloco(self):
+        bloco = self.cleaned_data.get('bloco')
+        condominio = self.instance.condominio
+        if condominio and (bloco < 1 or bloco > condominio.nro_blocos):
+            raise forms.ValidationError(f'O bloco deve estar entre 1 e {condominio.nro_blocos}.')
+        return bloco
+    
+    def clean_andar(self):
+        andar = self.cleaned_data.get('andar')
+        condominio = self.instance.condominio
+        if condominio and (andar < 1 or andar > condominio.nro_andares):
+            raise forms.ValidationError(f'O andar deve estar entre 1 e {condominio.nro_andares}.')
+        return andar
+    
+    def clean_apt(self):
+        apt = self.cleaned_data.get('apt')
+        condominio = self.instance.condominio
+        if condominio and (apt < 1 or apt > condominio.nro_apt):
+            raise forms.ValidationError(f'O apartamento deve estar entre 1 e {condominio.nro_apt}.')
+        return apt

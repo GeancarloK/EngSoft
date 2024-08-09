@@ -13,6 +13,7 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Entrar</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary">Voltar</a>
         </form>
     </div>
     <div class="container">

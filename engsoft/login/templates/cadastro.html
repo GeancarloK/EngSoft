@@ -7,20 +7,112 @@
 <body>
     <div class="container">
         <h2>Cadastro</h2>
+        
+        <!-- Exibição de mensagens de erro gerais -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>Erro!</strong>
+                <ul>
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
         <form method="post">
             {% csrf_token %}
-            {{ form.username.label_tag }} {{ form.username }}
-            {{ form.password.label_tag }} {{ form.password }}
-            {{ form.password2.label_tag }} {{ form.password2 }}
-            {{ form.email.label_tag }} {{ form.email }}
-            {{ form.email2.label_tag }} {{ form.email2 }}
-            {{ form.nome.label_tag }} {{ form.nome }}
-            {{ form.cpf.label_tag }} {{ form.cpf }}
-            {{ form.bloco.label_tag }} {{ form.bloco }}
-            {{ form.andar.label_tag }} {{ form.andar }}
-            {{ form.apt.label_tag }} {{ form.apt }}
+            
+            <!-- Campos do formulário com mensagens de erro -->
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                <input type="text" class="form-control" id="username" name="username" value="">
+                {% if form.username.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.username.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.email.label_tag }}
+                <input type="email" class="form-control" id="email" name="email" placeholder="{{ form.email.field.widget.attrs.placeholder }}" value="">
+                {% if form.email.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.email.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.email2.label_tag }}
+                <input type="email" class="form-control" id="email2" name="email2" placeholder="{{ form.email2.field.widget.attrs.placeholder }}" value="">
+                {% if form.email2.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.email2.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label_tag }}
+                <input type="password" class="form-control" id="password" name="password">
+                {% if form.password.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.password.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password2.label_tag }}
+                <input type="password" class="form-control" id="password2" name="password2">
+                {% if form.password2.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.password2.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Adicionando campos restantes -->
+            <div class="form-group">
+                {{ form.nome.label_tag }}
+                <input type="text" class="form-control" id="nome" name="nome" value="">
+                {% if form.nome.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.nome.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.cpf.label_tag }}
+                <input type="text" class="form-control" id="cpf" name="cpf" value="{{ form.cpf.value }}">
+                {% if form.cpf.errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.cpf.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
             <button type="submit" class="btn btn-primary">Cadastrar</button>
         </form>
+
+        <a href="{% url 'index' %}" class="btn btn-secondary mb-4">Voltar</a>
     </div>
 </body>
 </html>

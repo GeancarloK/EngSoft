@@ -63,12 +63,12 @@ class Pessoa(models.Model):
 
     def clean(self):
         if self.condominio:
-            if self.bloco < 1 or self.bloco > self.condominio.num_blocos:
-                raise ValidationError(f'O bloco deve estar entre 1 e {self.condominio.num_blocos}.')
-            if self.andar < 1 or self.andar > self.condominio.num_andares:
-                raise ValidationError(f'O andar deve estar entre 1 e {self.condominio.num_andares}.')
-            if self.apt < 1 or self.apt > self.condominio.num_apartamentos:
-                raise ValidationError(f'O apartamento deve estar entre 1 e {self.condominio.num_apartamentos}.')
+            if self.bloco < 1 or self.bloco > self.condominio.nro_blocos:
+                raise ValidationError(f'O bloco deve estar entre 1 e {self.condominio.nro_blocos}.')
+            if self.andar < 1 or self.andar > self.condominio.nro_andares:
+                raise ValidationError(f'O andar deve estar entre 1 e {self.condominio.nro_andares}.')
+            if self.apt < 1 or self.apt > self.condominio.nro_apt:
+                raise ValidationError(f'O apartamento deve estar entre 1 e {self.condominio.nro_apt}.')
             
     class Meta:
         verbose_name_plural = 'pessoas'

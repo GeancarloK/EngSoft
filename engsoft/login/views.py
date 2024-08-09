@@ -55,7 +55,6 @@ def editar_perfil(request):
             current_password = form.cleaned_data['current_password']
             new_password = form.cleaned_data['new_password']
 
-            # Check current password
             if not user.check_password(current_password):
                 form.add_error('current_password', 'Senha atual incorreta.')
             else:
@@ -214,6 +213,7 @@ def adm_editar_morador(request, usuario_id):
         form = AdmMoradorForm(request.POST, instance=pessoa)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Informações alteradas com sucesso!')
     else:
         form = AdmMoradorForm(instance=pessoa)
     
