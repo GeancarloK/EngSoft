@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from login import views as li
+from assembleia import views as bl
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,7 @@ urlpatterns = [
     path('adm/gerenciar_conta/<int:pk>/', li.adm_gerenciar_morador, name='adm_gerenciar_morador'),
     path('adm/moradores/', li.adm_lista_moradores, name='adm_lista_moradores'),
     path('adm/moradores/editar/<int:usuario_id>/', li.adm_editar_morador, name='adm_editar_morador'),
+    path('adm/assembleia/criar/', bl.adm_criar_assembleia, name='adm_criar_assembleia'),
     
     ##moradores
     path('user/home/', li.user_home, name='user_home'),
