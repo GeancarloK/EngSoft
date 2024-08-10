@@ -1,89 +1,120 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Assembléia</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
         .hidden-form {
             display: none;
         }
+        .disabled-option {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .selected-option {
+            font-weight: bold;
+        }
     </style>
-    <script>
-        $(document).ready(function () {
-            $('#show-form-btn').click(function () {
-                $('#request-form').toggle();
-                $(this).hide();
-            });
-        });
-    </script>
 </head>
-
 <body>
     <div class="container mt-4">
         <h1>Assembléia</h1>
 
+        {% if messages %}
+            <div class="alert alert-info">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if assembleias %}
-        <ul class="list-group">
-            {% for assembleia in assembleias %}
-            <li class="list-group-item">
-                <h3>{{ assembleia.titulo }} - Status: {{ assembleia.get_status_display }}</h3>
-                <p><strong>Condomínio:</strong> {{ assembleia.condominio.nome }}</p>
+            <ul class="list-group">
+                {% for assembleia in assembleias %}
+                    <li class="list-group-item">
+                        <h3>{{ assembleia.titulo }}</h3>
+                        <p><strong>Condomínio:</strong> {{ assembleia.condominio.nome }}</p>
+                        <p><strong>Data de início:</strong> {{ assembleia.data_inicio }}</p>
 
-                <button id="show-form-btn" class="btn btn-primary">Fazer Requisição</button>
-
-                <div id="request-form" class="hidden-form mt-3">
-                    <form method="post" action="{% url 'user_assembleias' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="assembleia_id" value="{{ assembleia.id }}">
-                        <div class="form-group">
-                            <label for="titulo">Título da Requisição:</label>
-                            <input type="text" name="titulo" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="descricao">Descrição:</label>
-                            <textarea name="descricao" class="form-control" rows="4"
-                                placeholder="Explique brevemente por que sua requisição merece ser atendida."
-                                required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Enviar Requisição</button>
-                    </form>
-                </div>
-
-                <div class="mt-4">
-                    <h4>Votações:</h4>
-                    {% for votacao in assembleia.votos.all %}
-                    <div class="votacao">
-                        <h5>{{ votacao.titulo }}</h5>
-                        <form method="post" action="{% url 'user_votar' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="votacao_id" value="{{ votacao.id }}">
-                            {% for opcao in votacao.opcoes.all %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="opcao_id" value="{{ opcao.id }}"
-                                    {% if votos_existentes.votacao.id %} disabled {% endif %}>
-                                <label class="form-check-label" for="opcao-{{ opcao.id }}">
-                                    {{ opcao.titulo }}
-                                </label>
+                        {% if not form_mostrar %}
+                            <!-- Botão "Fazer Requisição" -->
+                            <form method="post" action="{% url 'user_assembleias' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="assembleia_id" value="{{ assembleia.id }}">
+                                <input type="hidden" name="action" value="fazer_requisicao">
+                                <button type="submit" class="btn btn-primary">Fazer Requisição</button>
+                            </form>
+                        {% else %}
+                            <!-- Formulário de Requisição -->
+                            <div id="request-form" class="mt-3">
+                                <form method="post" action="{% url 'user_assembleias' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="assembleia_id" value="{{ assembleia.id }}">
+                                    <input type="hidden" name="action" value="enviar_requisicao">
+                                    <div class="form-group">
+                                        <label for="titulo">Título da Requisição:</label>
+                                        <input type="text" name="titulo" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="descricao">Descrição:</label>
+                                        <textarea name="descricao" class="form-control" rows="4"
+                                            placeholder="Explique brevemente por que sua requisição merece ser atendida."
+                                            required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Enviar Requisição</button>
+                                </form>
+                                
+                                <!-- Botão "Cancelar" -->
+                                <form method="post" action="{% url 'user_assembleias' %}" class="mt-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="cancelar_form">
+                                    <button type="submit" class="btn btn-secondary">Cancelar</button>
+                                </form>
                             </div>
-                            {% endfor %}
+                        {% endif %}
+
+                        <div class="mt-4">
+                            <h4>Votações:</h4>
+                            {% if assembleia.votos.all %}
+                                {% for votacao in assembleia.votos.all %}
+                                    <div class="votacao">
+                                        <h5>{{ votacao.titulo }}</h5>
+                                        <form method="post" action="{% url 'user_votar' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="votacao_id" value="{{ votacao.id }}">
+                                            
+                                            {% with voto_id=votos_existentes|get_item:votacao.id %}
+                                                {% for opcao in votacao.opcoes_votacao.all %}
+                                                    <div class="form-check">
+                                                        <input class="form-check-input {% if voto_id == opcao.id %} disabled-option {% endif %}" 
+                                                               type="radio" name="opcao_id" value="{{ opcao.id }}"
+                                                               {% if voto_id %} disabled {% endif %}>
+                                                        <label class="form-check-label {% if voto_id == opcao.id %} selected-option{% endif %}"
+                                                               for="opcao-{{ opcao.id }}">
+                                                            {{ opcao.titulo }}
+                                                        </label>
+                                                    </div>
+                                                {% endfor %}
                             
-                            <button type="submit" class="btn btn-success mt-2"
-                                {% if votos_existentes.votacao.id %} disabled {% endif %}>Votar</button>
-                        </form>
-                    </div>
-                    {% endfor %}
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
+                                                <button type="submit" class="btn btn-success mt-2" 
+                                                        {% if voto_id %} disabled {% endif %}>
+                                                    Votar
+                                                </button>
+                                            {% endwith %}
+                                        </form>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>Não há votações disponíveis no momento.</p>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
-        <p>Não há assembleias iniciadas para exibir.</p>
+            <p>Não há assembleias iniciadas para exibir.</p>
         {% endif %}
         <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary ml-2">Voltar</a>
     </div>
 </body>
-
 </html>

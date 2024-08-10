@@ -19,13 +19,13 @@
     <!-- Verifica se o morador é síndico -->
     {% if pessoa.sindico %}
         <div class="container">
-            <a href="{% url 'sindico_assembleias' %}" class="btn btn-success">Iniciar Assembleia</a>
+            <a href="{% url 'sindico_assembleias' %}" class="btn btn-primary">Gerenciar Assembleias</a>
         </div>
     {% else %}
         <!-- Verifica se há uma assembleia iniciada -->
         {% if assembleia_iniciada %}
             <div class="container">
-                <a href="{% url 'user_assembleias' %}" class="btn btn-info">Assembleias</a>
+                <a href="{% url 'user_assembleias' %}" class="btn btn-primary">Assembleias</a>
             </div>
         {% endif %}
     {% endif %}

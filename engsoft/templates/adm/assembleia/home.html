@@ -1,5 +1,8 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assembléias</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
@@ -15,33 +18,89 @@
             </div>
         {% endif %}
 
-        <div>
+        <div class="mb-4">
             <a href="{% url 'adm_criar_assembleia' %}" class="btn btn-primary">Criar Nova Assembleia</a>
             <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary ml-2">Voltar</a>
         </div>
-        
-        {% if assembleias %}
-            <ul class="list-group">
-            {% for assembleia in assembleias %}
-                <li class="list-group-item">
-                    <h3>{{ assembleia.condominio.nome }} - {{ assembleia.titulo }} - Status: {{ assembleia.get_status_display }}</h3>
-                    
-                    {% if assembleia.status == 'criada' %}
-                        <p><strong>Esperando início por síndico</strong></p>
-                    {% elif assembleia.status == 'iniciada' or assembleia.status == 'finalizada' %}
-                        <p><strong>Em andamento</strong></p>
-                    {% elif assembleia.status == 'entregue' %}
-                        {% if assembleia.registros.exists %}
-                            {% for registro in assembleia.registros.all %}
-                                <p><strong>Resumo:</strong><br>{{ registro.resumo }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    {% endif %}
-                </li>
-            {% endfor %}
-            </ul>
-        {% else %}
-            <p>Não há assembleias para exibir.</p>
+
+        <!-- Seção 'Esperando início por síndico' -->
+        <div class="mb-4">
+            <h2>Esperando início por síndico</h2>
+            {% if criada_assembleias %}
+                {% for assembleia in criada_assembleias %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                            <p class="card-text"><strong>Esperando início por síndico</strong></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Nenhuma assembleia esperando início por síndico.</p>
+            {% endif %}
+        </div>
+
+        <!-- Seção 'Em andamento' -->
+        <div class="mb-4">
+            <h2>Em andamento</h2>
+            {% if iniciada_assembleias %}
+                {% for assembleia in iniciada_assembleias %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                            <p class="card-text"><strong>Em andamento</strong></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Nenhuma assembleia em andamento.</p>
+            {% endif %}
+        </div>
+
+        <!-- Seção 'Finalizada' -->
+        <div class="mb-4">
+            <h2>Finalizada</h2>
+            {% if finalizada_assembleias %}
+                {% for assembleia in finalizada_assembleias %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                            <p class="card-text"><strong>Finalizada</strong></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Nenhuma assembleia finalizada.</p>
+            {% endif %}
+        </div>
+
+        <!-- Seção 'Entregue' -->
+        <div class="mb-4">
+            <h2>Entregue</h2>
+            {% if entregue_assembleias %}
+                {% for assembleia in entregue_assembleias %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                            {% if assembleia.registros.exists %}
+                                {% for registro in assembleia.registros.all %}
+                                    <p class="card-text"><strong>Resumo:</strong><br>{{ registro.resumo }}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Nenhuma assembleia entregue.</p>
+            {% endif %}
+        </div>
+
+        {% if not criada_assembleias and not iniciada_assembleias and not finalizada_assembleias and not entregue_assembleias %}
+            <p class="text-muted">Não há assembleias para exibir.</p>
         {% endif %}
     </div>
 </body>

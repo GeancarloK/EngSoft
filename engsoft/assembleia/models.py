@@ -60,6 +60,7 @@ class Voto(models.Model):
 class Registro(models.Model):
     assembleia = models.ForeignKey(Assembleia, on_delete=models.CASCADE, related_name='registros')
     resumo = models.TextField()
+    detalhes_votacoes = models.TextField()
     data_criacao = models.DateTimeField(null=True, blank=True)
     data_finalizacao = models.DateTimeField(null=True, blank=True)
 

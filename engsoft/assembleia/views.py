@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
+from django.template.defaulttags import register
 from .models import Votacao, Assembleia, Registro, OpcaoVotacao, Requisicao, Voto
 from .forms import AssembleiaForm
 from login.models import Construtora, Condominio, Pessoa
@@ -102,16 +103,32 @@ def entregar_assembleia(request, assembleia_id):
     permissao_sindico(request)
     assembleia = get_object_or_404(Assembleia, id=assembleia_id)
     if request.method == 'POST':
-        resumo = request.POST.get('resumo') #debug
-        print(f"Resumo recebido: {resumo}") 
-        if resumo: 
-            registro = Registro.objects.create(assembleia=assembleia, resumo=resumo, data_criacao=timezone.now())
+        resumo = request.POST.get('resumo')
+
+        detalhes_votacoes = []
+        for votacao in assembleia.votos.all():
+            detalhes_votacao = f"Votação: {votacao.titulo}\n"
+            for opcao in votacao.opcoes_votacao.all():
+                detalhes_votacao += f" - Opção: {opcao.titulo} recebeu {opcao.votos} votos\n"
+
+            participantes = Voto.objects.filter(votacao=votacao).values_list('morador__usuario__username', flat=True).distinct()
+            detalhes_votacao += "Participantes:\n" + "\n".join(participantes) + "\n"
+
+            detalhes_votacoes.append(detalhes_votacao)
+
+        relatorio_completo = resumo + "\n\nDetalhes das Votações:\n" + "\n".join(detalhes_votacoes)
+        print(f"Relatório completo: {relatorio_completo}")
+
+        if resumo:
+            registro = Registro.objects.create(assembleia=assembleia, resumo=relatorio_completo, data_criacao=timezone.now())
             assembleia.status = 'entregue'
             assembleia.save()
             return redirect('sindico_assembleias')
         else:
-            print("Resumo não fornecido")
-    return render(request, 'user/assembleia/entregar.html', {'assembleia': assembleia})
+            messages.error(request, "Resumo não fornecido.")
+    
+    return render(request, 'user/assembleia/home.html', {'assembleia': assembleia})
+
 
 
 @login_required
@@ -160,13 +177,25 @@ def home_assembleias(request):
         condominio__in=condominios
     ).select_related('criado_por').prefetch_related('registros')
 
+    # Filtrando assembleias por status
+    criada_assembleias = assembleias.filter(status='criada').order_by('data_criacao')
+    iniciada_assembleias = assembleias.filter(status='iniciada').order_by('data_criacao')
+    finalizada_assembleias = assembleias.filter(status='finalizada').order_by('data_criacao')
+    entregue_assembleias = assembleias.filter(status='entregue').order_by('data_criacao')
+    
     context = {
-        'assembleias': assembleias,
+        'criada_assembleias': criada_assembleias,
+        'iniciada_assembleias': iniciada_assembleias,
+        'finalizada_assembleias': finalizada_assembleias,
+        'entregue_assembleias': entregue_assembleias,
     }
     return render(request, 'adm/assembleia/home.html', context)
 
 
 
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
 
 ###MORADOR
 @login_required
@@ -179,38 +208,67 @@ def user_assembleias(request):
         for assembleia in assembleias:
             votacoes = Votacao.objects.filter(assembleia=assembleia)
             for votacao in votacoes:
-                votos_existentes[votacao.id] = Voto.objects.filter(votacao=votacao, morador=pessoa).exists()
+                votos = Voto.objects.filter(votacao=votacao, morador=pessoa)
+                votos_existentes[votacao.id] = votos.values_list('opcao_id', flat=True).first()
 
         if request.method == 'POST':
+            action = request.POST.get('action')
             assembleia_id = request.POST.get('assembleia_id')
-            titulo = request.POST.get('titulo')
-            descricao = request.POST.get('descricao')
+            print("Assembleia ID recebido:", assembleia_id)  # Verifique o ID aqui
 
-            assembleia = Assembleia.objects.get(id=assembleia_id)
-            Requisicao.objects.create(
-                titulo=titulo,
-                descricao=descricao,
-                assembleia=assembleia
-            )
+            try:
+                assembleia = Assembleia.objects.get(id=assembleia_id)
+            except Assembleia.DoesNotExist:
+                messages.error(request, 'A assembleia selecionada não existe.')
+                return redirect('user_assembleias')
 
-            messages.success(request, 'Requisição feita com sucesso!')
-            return redirect('user_assembleias')
-        
+            if action == 'fazer_requisicao':
+                context = {
+                    'assembleias': assembleias,
+                    'pessoa': pessoa,
+                    'votos_existentes': votos_existentes,
+                    'form_mostrar': True,
+                }
+                return render(request, 'user/assembleia/morador.html', context)
+                
+            elif action == 'enviar_requisicao':
+                titulo = request.POST.get('titulo')
+                descricao = request.POST.get('descricao')
+
+                Requisicao.objects.create(
+                    titulo=titulo,
+                    descricao=descricao,
+                    assembleia=assembleia,
+                )
+
+                messages.success(request, 'Requisição feita com sucesso!')
+                return redirect('user_assembleias')
+                
+            elif action == 'cancelar_form':
+                return redirect('user_assembleias')
+
         context = {
             'assembleias': assembleias,
             'pessoa': pessoa,
             'votos_existentes': votos_existentes,
         }
         return render(request, 'user/assembleia/morador.html', context)
+
     except Pessoa.DoesNotExist:
         messages.error(request, 'Você não está associado a nenhum condomínio.')
         return redirect('user_home_redirect')
-    
+
+
+
 @login_required
 def user_votar(request):
     if request.method == 'POST':
         votacao_id = request.POST.get('votacao_id')
         opcao_id = request.POST.get('opcao_id')
+
+        if not opcao_id:
+            messages.error(request, 'Por favor, selecione uma opção antes de votar.')
+            return redirect('user_assembleias')
 
         votacao = Votacao.objects.get(id=votacao_id)
         opcao = OpcaoVotacao.objects.get(id=opcao_id)
@@ -230,3 +288,4 @@ def user_votar(request):
             messages.success(request, 'Voto registrado com sucesso!')
 
         return redirect('user_assembleias')
+
