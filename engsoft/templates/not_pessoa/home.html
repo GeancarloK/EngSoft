@@ -17,6 +17,11 @@
             document.getElementById('max_blocos').textContent = maxBlocos;
             document.getElementById('max_andares').textContent = maxAndares;
             document.getElementById('max_apt').textContent = maxApt;
+
+            // Show or hide details based on the number of blocs, floors, and apartments
+            document.getElementById('blocos-section').style.display = (maxBlocos > 1) ? 'block' : 'none';
+            document.getElementById('andares-section').style.display = (maxAndares > 1) ? 'block' : 'none';
+            document.getElementById('apt-section').style.display = (maxApt > 1) ? 'block' : 'none';
         }
 
         function showDetails() {
@@ -35,6 +40,9 @@
             document.getElementById('condominio-section').style.display = 'block';
             document.getElementById('details-section').style.display = 'none';
             document.getElementById('condominio-name').textContent = '';
+            document.getElementById('blocos-section').style.display = 'none';
+            document.getElementById('andares-section').style.display = 'none';
+            document.getElementById('apt-section').style.display = 'none';
         }
     </script>
 </head>
@@ -42,14 +50,9 @@
     <div class="container">
         <h1>Bem-vindo, {{ not_pessoa.nome }}!</h1>
     </div>
+    
     <div class="container">
-        <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
-    </div>
-    <div class="container">
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-    </div>
-    <div class="container">
-        <h1>Requisição de Cadastro para {{ not_pessoa.nome }}</h1>
+        <h2>Requisição de Cadastro para {{ not_pessoa.nome }}</h2>
 
         {% if pendencia %}
             <h5>Você tem uma pendência:</h5>
@@ -63,7 +66,6 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            <h5>Pedido de cadastro no edifício:</h5>
             {% if error_message %}
                 <div class="alert alert-danger" role="alert">
                     {{ error_message }}
@@ -89,35 +91,43 @@
 
                 <!-- Segunda Parte: Detalhes e Formulário Completo -->
                 <div id="details-section" style="display:none;">
-                    <h4>Condomínio Selecionado: <span id="condominio-name"></span></h4>
-                    <div id="condominio-details" class="mb-3">
+                    <h4>Condomínio Selecionado: <strong><span id="condominio-name"></span></strong></h4>
+                    
+                    <div id="blocos-section" style="display:none;">
                         <div class="form-group">
                             <label>Número de Blocos: <span id="max_blocos">N/A</span></label>
+                            <label for="bloco">Blocos</label>
+                            <input type="number" class="form-control" id="bloco" name="bloco" min="1" value="1">
                         </div>
+                    </div>
+
+                    <div id="andares-section" style="display:none;">
                         <div class="form-group">
                             <label>Número de Andares: <span id="max_andares">N/A</span></label>
+                            <label for="andar">Andares</label>
+                            <input type="number" class="form-control" id="andar" name="andar" min="1" value="1">
                         </div>
+                    </div>
+
+                    <div id="apt-section" style="display:none;">
                         <div class="form-group">
                             <label>Número de Apartamentos: <span id="max_apt">N/A</span></label>
+                            <label for="apt">Apartamentos</label>
+                            <input type="number" class="form-control" id="apt" name="apt" min="1" value="1">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="bloco">Bloco</label>
-                        <input type="number" class="form-control" id="bloco" name="bloco" min="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="andar">Andar</label>
-                        <input type="number" class="form-control" id="andar" name="andar" min="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="apt">Apartamento</label>
-                        <input type="number" class="form-control" id="apt" name="apt" min="1" required>
-                    </div>
+
                     <button type="submit" class="btn btn-primary">Enviar Pedido</button>
                     <button type="button" class="btn btn-secondary" onclick="resetForm()">Alterar Condomínio</button>
                 </div>
             </form>
         {% endif %}
+    </div>
+    <div class="container">
+        <a href="{% url 'editar_perfil' %}" class="btn btn-warning">Editar Perfil</a>
+    </div>
+    <div class="container">
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
     </div>
 </body>
 </html>

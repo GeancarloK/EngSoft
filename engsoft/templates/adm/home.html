@@ -20,9 +20,11 @@
     <div class="container">
         <a href="{% url 'home_assembleias' %}" class="btn btn-primary">Assembleias</a>
     </div>
+    {% if pendencias_existentes %}
     <div class="container">
         <a href="{% url 'adm_pendentes' %}" class="btn btn-primary">Pendentes</a>
     </div>
+    {% endif %}
     <div class="container">
         <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
     </div>

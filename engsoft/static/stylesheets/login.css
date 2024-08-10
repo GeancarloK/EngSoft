@@ -59,6 +59,10 @@ a.alert:hover {
     padding: 0 50px;
 }
 
+.logo img {
+    width: 80%;
+}
+
 /* Media query para telas pequenas (celulares) */
 @media screen and (max-width: 900px) {
     .frontpage {

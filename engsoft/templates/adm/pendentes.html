@@ -26,7 +26,7 @@
                 {% for not_pessoa in pending_registrations %}
                     <li class="list-group-item">
                         {{ not_pessoa.nome }} - {{ not_pessoa.pendencia.nome }}
-                        <a href="{% url 'adm_gerenciar_morador' not_pessoa.pk %}" class="btn btn-primary btn-sm float-right">Aprovar</a>
+                        <a href="{% url 'adm_gerenciar_morador' not_pessoa.pk %}" class="btn btn-primary btn-sm float-right">Analisar</a>
                     </li>
                 {% endfor %}
             </ul>

@@ -116,11 +116,11 @@ def entregar_assembleia(request, assembleia_id):
 
             detalhes_votacoes.append(detalhes_votacao)
 
-        relatorio_completo = resumo + "\n\nDetalhes das Votações:\n" + "\n".join(detalhes_votacoes)
-        print(f"Relatório completo: {relatorio_completo}")
+        #relatorio_completo = resumo + "\n\nDetalhes das Votações:\n" + "\n".join(detalhes_votacoes)
+        #print(f"Relatório completo: {relatorio_completo}")
 
         if resumo:
-            registro = Registro.objects.create(assembleia=assembleia, resumo=relatorio_completo, data_criacao=timezone.now())
+            registro = Registro.objects.create(assembleia=assembleia, resumo=resumo, detalhes_votacoes=detalhes_votacoes, data_criacao=timezone.now())
             assembleia.status = 'entregue'
             assembleia.save()
             return redirect('sindico_assembleias')

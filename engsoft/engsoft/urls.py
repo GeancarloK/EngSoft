@@ -28,6 +28,7 @@ urlpatterns = [
     path('adm/pendentes/', li.adm_pendentes, name='adm_pendentes'),
     path('adm/gerenciar_conta/<int:pk>/', li.adm_gerenciar_morador, name='adm_gerenciar_morador'),
     path('adm/moradores/', li.adm_lista_moradores, name='adm_lista_moradores'),
+    path('adm/moradores/sindico/<int:pessoa_id>', li.tornar_sindico, name='adm_tornar_sindico'),
     path('adm/moradores/editar/<int:usuario_id>/', li.adm_editar_morador, name='adm_editar_morador'),
     path('adm/assembleia/', bl.home_assembleias, name='home_assembleias'),
     path('adm/assembleia/criar/', bl.adm_criar_assembleia, name='adm_criar_assembleia'),

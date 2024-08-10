@@ -156,6 +156,26 @@ def adm_meus_condominios(request):
     context = {'condominios': condominios}
     return render(request, 'adm/meus_condominios.html', context)
 
+def tornar_sindico(request, pessoa_id):
+    pessoa = get_object_or_404(Pessoa, id=pessoa_id)
+    
+    if pessoa.sindico:
+        messages.error(request, "A pessoa já é Síndico.")
+        return redirect('adm_lista_moradores')
+
+    condominio = pessoa.condominio
+    sindico_atual = Pessoa.objects.filter(condominio=condominio, sindico=True).first()
+
+    if sindico_atual and sindico_atual != pessoa:
+        sindico_atual.sindico = False
+        sindico_atual.save()
+
+    pessoa.sindico = True
+    pessoa.save()
+
+    messages.success(request, "A pessoa foi promovida a Síndico com sucesso.")
+    return redirect('adm_lista_moradores')
+
 
 @login_required
 def adm_home(request):
@@ -163,10 +183,23 @@ def adm_home(request):
         # Obtém a construtora associada ao usuário
         construtora = Construtora.objects.get(administrador=request.user)
         construtora_nome = construtora.nome
-    except Construtora.DoesNotExist:
-        construtora_nome = "Nome da Construtora Não Encontrado"
 
-    return render(request, 'adm/home.html', {'construtora_nome': construtora_nome})
+        # Verifica se há pendências em algum condomínio associado à construtora
+        pendencias_existentes = NotPessoa.objects.filter(
+            pendencia__in=Condominio.objects.filter(construtora=construtora)
+        ).exists()
+
+        # Adiciona a informação ao contexto
+        context = {
+            'construtora_nome': construtora_nome,
+            'pendencias_existentes': pendencias_existentes,
+        }
+
+    except Construtora.DoesNotExist:
+        context = {'construtora_nome': "Nome da Construtora Não Encontrado", 'pendencias_existentes': False}
+
+    return render(request, 'adm/home.html', context)
+
 
 def adm_detalhes_condominio(request, condominio_id):
     condominio = get_object_or_404(Condominio, id=condominio_id)
@@ -206,7 +239,11 @@ def adm_lista_moradores(request):
     context = {}
     for condominio in condominios:
         pessoas = Pessoa.objects.filter(condominio=condominio).order_by('nome')
-        context[condominio] = pessoas
+        sindico_exists = pessoas.filter(sindico=True).exists()
+        context[condominio] = {
+            'pessoas': pessoas,
+            'sindico_exists': sindico_exists
+        }
 
     return render(request, 'adm/lista_moradores.html', {'context': context})
 

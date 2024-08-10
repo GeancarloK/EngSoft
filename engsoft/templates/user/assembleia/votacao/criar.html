@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <title>Criar Votação</title>
@@ -11,47 +10,42 @@
             var input = document.createElement("input");
             input.type = "text";
             input.name = "opcao";
-            input.className = "form-control mt-2";
+            input.className = "form-control";
             input.placeholder = "Nova opção";
             container.appendChild(input);
         }
     </script>
 </head>
-
 <body>
-    <div class="container mt-5">
-        <div class="header mb-4">
-            <h1>Criar Votação para a Assembleia: {{ assembleia.titulo }}</h1>
-        </div>
+    <div class="container">
+        <h1>Criar Votação para a Assembleia: {{ assembleia.titulo }}</h1>
 
         {% if error_message %}
-        <div class="alert alert-danger mb-4">
-            {{ error_message }}
-        </div>
+            <div class="alert alert-danger">{{ error_message }}</div>
         {% endif %}
 
-        <div class="form-container">
-            <form method="post">
-                {% csrf_token %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="titulo">Título da Votação:</label>
+                <input type="text" id="titulo" name="titulo" class="form-control" required>
+            </div>
 
-                <div class="form-group mb-3">
-                    <label for="titulo">Título da Votação:</label>
-                    <input type="text" id="titulo" name="titulo" class="form-control" required>
-                </div>
+            <div id="opcoes-container" class="form-group">
+                <label>Opções:</label>
+                <input type="text" name="opcao" class="form-control" placeholder="Opção 1" required>
+                <input type="text" name="opcao" class="form-control" placeholder="Opção 2" required>
+            </div>
 
-                <div id="opcoes-container" class="form-group mb-3">
-                    <label>Opções:</label>
-                    <input type="text" name="opcao" class="form-control mt-2" placeholder="Opção 1" required>
-                    <input type="text" name="opcao" class="form-control mt-2" placeholder="Opção 2" required>
-                </div>
+            <button type="button" class="btn btn-warning" onclick="adicionarOpcao()">Adicionar Opção</button>
+            <br><br>
+            <button type="submit" class="btn btn-primary">Criar Votação</button>
+        </form>
 
-                <div class="buttons mb-3">
-                    <button type="button" class="btn btn-secondary mr-2" onclick="adicionarOpcao()">Adicionar Opção</button>
-                    <button type="submit" class="btn btn-primary">Criar Votação</button>
-                </div>
-            </form>
+        <!-- Botão para voltar para a assembleia -->
+        <div class="mt-4">
+            <a href="{% url 'sindico_assembleias' %}" class="btn btn-secondary">Voltar</a>
         </div>
     </div>
 </body>
-
 </html>

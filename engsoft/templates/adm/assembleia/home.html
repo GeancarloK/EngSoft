@@ -89,6 +89,7 @@
                             {% if assembleia.registros.exists %}
                                 {% for registro in assembleia.registros.all %}
                                     <p class="card-text"><strong>Resumo:</strong><br>{{ registro.resumo }}</p>
+                                    <p class="card-text"><strong>Votações:</strong><br>{{ registro.detalhes_votacoes|linebreaks }}</p>
                                 {% endfor %}
                             {% endif %}
                         </div>
