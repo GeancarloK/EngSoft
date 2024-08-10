@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Pedidos Pendentes</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+    <link rel="stylesheet" href="{% static 'stylesheets/adm.css' %}">
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1>Pedidos Pendentes</h1>
         
@@ -25,7 +26,7 @@
             <ul class="list-group">
                 {% for not_pessoa in pending_registrations %}
                     <li class="list-group-item">
-                        {{ not_pessoa.nome }} - {{ not_pessoa.pendencia.nome }}
+                        {{ not_pessoa.nome }} - <strong>{{ not_pessoa.pendencia.nome }}</strong>
                         <a href="{% url 'adm_gerenciar_morador' not_pessoa.pk %}" class="btn btn-primary btn-sm float-right">Analisar</a>
                     </li>
                 {% endfor %}
@@ -35,6 +36,7 @@
         {% endif %}
         <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary ml-2">Voltar</a>
     </div>
+    {% include "footer.html" %}
 
     <!-- Bootstrap JS (for alert dismiss) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

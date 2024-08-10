@@ -1,11 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Atualizar Perfil</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/user.css' %}">
 </head>
 <body>
     <div class="container">
+        {% include "header.html" %}
         <h1>Atualizar Perfil</h1>
         
         {% if form.errors %}
@@ -51,5 +53,6 @@
             <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary">Voltar</a>
         </form>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

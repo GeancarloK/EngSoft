@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Criar Votação</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/user.css' %}">
     <script>
         function adicionarOpcao() {
             var container = document.getElementById("opcoes-container");
@@ -17,6 +18,7 @@
     </script>
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1>Criar Votação para a Assembleia: {{ assembleia.titulo }}</h1>
 
@@ -47,5 +49,6 @@
             <a href="{% url 'sindico_assembleias' %}" class="btn btn-secondary">Voltar</a>
         </div>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

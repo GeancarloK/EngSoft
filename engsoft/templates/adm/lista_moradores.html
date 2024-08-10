@@ -1,10 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Lista de Moradores</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/adm.css' %}">
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container mt-4">
         <h1 class="mb-4">Gerenciar Imóveis</h1>
         {% if messages %}
@@ -70,5 +72,6 @@
         {% endfor %}
         <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary ml-2">Voltar</a>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

@@ -1,10 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Criar Condomínio</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/adm.css' %}">
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1>Criar Condomínio</h1>
         <form method="post">
@@ -30,7 +32,7 @@
                 <input type="number" class="form-control" id="nro_apt" name="nro_apt" min="1" required>
             </div>
             <button type="submit" class="btn btn-primary">Criar</button>
-            <a href="{% url 'adm_home' %}" class="btn btn-primary">Voltar</a>
+            <a href="{% url 'adm_home' %}" class="btn btn-secondary">Voltar</a>
         </form>
         {% if nome_predio %}
             <div class="alert alert-success" role="alert">
@@ -38,5 +40,6 @@
             </div>
         {% endif %}
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

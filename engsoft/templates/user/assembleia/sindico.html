@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Assembleias</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/user.css' %}">
     <style>
         .assembleia-item {
             margin-bottom: 20px;
@@ -26,6 +27,7 @@
     </style>
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1 class="my-4">Assembleias</h1>
 
@@ -86,5 +88,6 @@
             <a href="{% url 'user_home' %}" class="btn btn-secondary">Voltar</a>
         </div>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

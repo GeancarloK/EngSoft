@@ -1,10 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Editar Membro</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1>Editar {{ pessoa.nome }}</h1>
     </div>
@@ -75,5 +77,6 @@
         </form>
         <a href="{% url 'adm_lista_moradores' %}" class="btn btn-secondary mb-4">Voltar</a>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

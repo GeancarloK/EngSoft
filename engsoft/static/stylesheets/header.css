@@ -1,2 +1,9 @@
 /* import main CSS file*/
 @import "styles.css";
+
+.navbar {
+    display: block;
+    background-color: var(--blue);
+    height: 90px;
+    width: 100vw;
+}

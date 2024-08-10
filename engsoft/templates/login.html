@@ -1,10 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
 </head>
 <body>
+    <div class="header-login"></div>
     <div class="container">
         <h1>Login</h1>
     </div>
@@ -51,5 +53,6 @@
             <a href="{% url 'index' %}" class="btn btn-secondary">Voltar</a>
         </form>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

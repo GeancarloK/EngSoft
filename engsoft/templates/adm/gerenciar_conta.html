@@ -1,10 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Gerenciar Conta de Morador</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/adm.css' %}">
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1>Aprovar Morador</h1>
         <p><strong>Nome:</strong> {{ not_pessoa.nome }}</p>
@@ -27,5 +29,6 @@
         
         <a href="{% url 'adm_pendentes' %}" class="btn btn-secondary">Voltar</a>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

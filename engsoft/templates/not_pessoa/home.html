@@ -1,8 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Requisição de Cadastro</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
     <script>
         function updateDetails() {
             var condominioSelect = document.getElementById('condominio');
@@ -47,6 +48,7 @@
     </script>
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1>Bem-vindo, {{ not_pessoa.nome }}!</h1>
     </div>
@@ -124,10 +126,11 @@
         {% endif %}
     </div>
     <div class="container">
-        <a href="{% url 'editar_perfil' %}" class="btn btn-warning">Editar Perfil</a>
+        <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
     </div>
     <div class="container">
         <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container">
         <h1>Bem-vindo, {{ pessoa.nome }}!</h1>
         <h5>{{ pessoa.condominio }}, bloco {{ pessoa.bloco }}, {{ pessoa.andar }}º andar, apto. {{ pessoa.apt }}</h5>  
@@ -15,18 +16,19 @@
     <!-- Verifica se o morador é síndico -->
     {% if pessoa.sindico %}
         <div class="container">
-            <a href="{% url 'sindico_assembleias' %}" class="btn btn-warning">Gerenciar Assembleias</a>
+            <a href="{% url 'sindico_assembleias' %}" class="btn btn-primary">Gerenciar Assembleias</a>
         </div>
     {% else %}
         <!-- Verifica se há uma assembleia iniciada -->
         {% if assembleia_iniciada %}
             <div class="container">
-                <a href="{% url 'user_assembleias' %}" class="btn btn-warning">Assembleias</a>
+                <a href="{% url 'user_assembleias' %}" class="btn btn-primary">Assembleias</a>
             </div>
         {% endif %}
     {% endif %}
     <div class="container">
         <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
     </div>
+    {% include "footer.html" %}
 </body>
 </html>

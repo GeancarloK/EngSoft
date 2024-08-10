@@ -102,32 +102,46 @@ def finalizar_assembleia(request, assembleia_id):
 def entregar_assembleia(request, assembleia_id):
     permissao_sindico(request)
     assembleia = get_object_or_404(Assembleia, id=assembleia_id)
+    registros = assembleia.registros.all()  # Certifique-se de que registros existem
+
     if request.method == 'POST':
         resumo = request.POST.get('resumo')
 
         detalhes_votacoes = []
         for votacao in assembleia.votos.all():
-            detalhes_votacao = f"Votação: {votacao.titulo}\n"
+            detalhes_votacao = {
+                'titulo': votacao.titulo,
+                'opcoes': []
+            }
             for opcao in votacao.opcoes_votacao.all():
-                detalhes_votacao += f" - Opção: {opcao.titulo} recebeu {opcao.votos} votos\n"
+                detalhes_votacao['opcoes'].append({
+                    'titulo': opcao.titulo,
+                    'votos': opcao.votos
+                })
 
             participantes = Voto.objects.filter(votacao=votacao).values_list('morador__usuario__username', flat=True).distinct()
-            detalhes_votacao += "Participantes:\n" + "\n".join(participantes) + "\n"
+            detalhes_votacao['participantes'] = participantes
 
             detalhes_votacoes.append(detalhes_votacao)
 
-        #relatorio_completo = resumo + "\n\nDetalhes das Votações:\n" + "\n".join(detalhes_votacoes)
-        #print(f"Relatório completo: {relatorio_completo}")
-
         if resumo:
-            registro = Registro.objects.create(assembleia=assembleia, resumo=resumo, detalhes_votacoes=detalhes_votacoes, data_criacao=timezone.now())
+            Registro.objects.create(
+                assembleia=assembleia,
+                resumo=resumo,
+                detalhes_votacoes=detalhes_votacoes,
+                data_criacao=timezone.now()
+            )
             assembleia.status = 'entregue'
             assembleia.save()
             return redirect('sindico_assembleias')
         else:
             messages.error(request, "Resumo não fornecido.")
     
-    return render(request, 'user/assembleia/home.html', {'assembleia': assembleia})
+    return render(request, 'user/assembleia/sindico.html', {
+        'assembleia': assembleia,
+        'registros': registros  # Certifique-se de passar os registros para o template
+    })
+
 
 
 

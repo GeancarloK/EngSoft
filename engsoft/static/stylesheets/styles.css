@@ -45,11 +45,11 @@ body {
     height: 100vh;
 }
 
-/* Estilos para o título */
+/* Estilos para o título 
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
-}
+}*/
 
 /* Estilos para os botões */
 .btn {
@@ -104,13 +104,49 @@ h1 {
 }
 
 .btn-danger {
-    background-color: var(--green);
+    background-color: var(--red);
     color: white;
-    border-color: var(--green);
+    border-color: var(--red);
 }
 
 .btn-danger:hover {
     background-color: white;
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.btn-warning {
+    background-color: var(--yellow);
+    color: white;
+    border-color: var(--yellow);
+}
+
+.btn-warning:hover {
+    background-color: white;
+    color: var(--yellow);
+    border-color: var(--yellow);
+}
+
+.btn-light {
+    background-color: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+.btn-light:hover {
+    background-color: white;
     color: var(--blue);
     border-color: var(--blue);
+}
+
+.btn-dark {
+    background-color: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+}
+
+.btn-dark:hover {
+    background-color: var(--white);
+    color: var(--black);
+    border-color: var(--white);
 }

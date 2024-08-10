@@ -1,12 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assembléias</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
 </head>
 <body>
+    {% include "header.html" %}
     <div class="container mt-4">
         <h1>Assembléias</h1>
 
@@ -89,7 +91,27 @@
                             {% if assembleia.registros.exists %}
                                 {% for registro in assembleia.registros.all %}
                                     <p class="card-text"><strong>Resumo:</strong><br>{{ registro.resumo }}</p>
-                                    <p class="card-text"><strong>Votações:</strong><br>{{ registro.detalhes_votacoes|linebreaks }}</p>
+                                    <p class="card-text"><strong>Votações:</strong></p>
+                                    <ul>
+                                        {% for votacao in assembleia.votos.all %}
+                                            <li>
+                                                <strong>Votação: {{ votacao.titulo }}</strong>
+                                                <ul>
+                                                    {% with votacao.opcoes_votacao.all as opcoes %}
+                                                        {% with opcoes|dictsort:"votos" as sorted_opcoes %}
+                                                            {% with sorted_opcoes.last as maior_votos %}
+                                                                {% for opcao in sorted_opcoes %}
+                                                                    <li {% if opcao.votos == maior_votos.votos %}style="font-weight: bold"{% endif %}>
+                                                                        Opção: <strong>{{ opcao.titulo }}</strong> -> {{ opcao.votos }} votos
+                                                                    </li>
+                                                                {% endfor %}
+                                                            {% endwith %}
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
                                 {% endfor %}
                             {% endif %}
                         </div>
@@ -104,5 +126,6 @@
             <p class="text-muted">Não há assembleias para exibir.</p>
         {% endif %}
     </div>
+    {% include "footer.html" %}
 </body>
 </html>
