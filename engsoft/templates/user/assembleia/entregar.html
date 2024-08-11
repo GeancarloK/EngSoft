@@ -12,12 +12,10 @@
 
         <form method="post">
             {% csrf_token %}
-            
             <div class="form-group">
                 <label for="resumo">Resumo da Assembleia</label>
                 <textarea class="form-control" id="resumo" name="resumo" rows="5" required></textarea>
             </div>
-
             <button type="submit" class="btn btn-primary">Entregar Assembleia</button>
         </form>
     </div>

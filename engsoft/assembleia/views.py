@@ -15,6 +15,26 @@ def permissao_construtora(request):
     except Construtora.DoesNotExist:
         messages.error(request, 'Você não tem permissão para acessar esta página.')
         return user_home_redirect(request)
+    
+@login_required
+def criar_assembleia_id(request, condominio_id):
+    condominio = get_object_or_404(Condominio, id=condominio_id)
+    
+    if request.method == 'POST':
+        # Aqui você pode adicionar a lógica para criar uma nova assembleia
+        titulo = request.POST.get('titulo')
+        nova_assembleia = Assembleia.objects.create(
+            condominio=condominio,
+            titulo=titulo,
+            status='criada',  # Ajuste conforme necessário
+        )
+        # Redirecionar após criar a assembleia
+        return redirect('home_assembleias_condominio', condominio_id=condominio_id)
+
+    context = {
+        'condominio': condominio
+    }
+    return render(request, 'adm/assembleia/criar_id.html', context)
 
 @login_required
 def adm_criar_assembleia(request):
@@ -102,7 +122,6 @@ def finalizar_assembleia(request, assembleia_id):
 def entregar_assembleia(request, assembleia_id):
     permissao_sindico(request)
     assembleia = get_object_or_404(Assembleia, id=assembleia_id)
-    registros = assembleia.registros.all()  # Certifique-se de que registros existem
 
     if request.method == 'POST':
         resumo = request.POST.get('resumo')
@@ -137,9 +156,8 @@ def entregar_assembleia(request, assembleia_id):
         else:
             messages.error(request, "Resumo não fornecido.")
     
-    return render(request, 'user/assembleia/sindico.html', {
-        'assembleia': assembleia,
-        'registros': registros  # Certifique-se de passar os registros para o template
+    return render(request, 'user/assembleia/entregar.html', {
+        'assembleia': assembleia
     })
 
 
@@ -175,6 +193,29 @@ def entrar_assembleia(request, assembleia_id):
 
     # Adicione a lógica necessária para a página da assembleia
     return render(request, 'user/assembleia/morador.html', {'assembleia': assembleia})
+
+@login_required
+def home_assembleias_condominio(request, condominio_id):
+    # Tenta obter o condomínio ou retorna um erro 404 se não for encontrado
+    condominio = get_object_or_404(Condominio, id=condominio_id)
+    
+    # Obtém assembleias com base no status
+    criada_assembleias = Assembleia.objects.filter(condominio=condominio, status='criada')
+    iniciada_assembleias = Assembleia.objects.filter(condominio=condominio, status='iniciada')
+    finalizada_assembleias = Assembleia.objects.filter(condominio=condominio, status='finalizada')
+    entregue_assembleias = Assembleia.objects.filter(condominio=condominio, status='entregue')
+    
+    # Prepara o contexto para o template
+    context = {
+        'condominio': condominio,
+        'criada_assembleias': criada_assembleias,
+        'iniciada_assembleias': iniciada_assembleias,
+        'finalizada_assembleias': finalizada_assembleias,
+        'entregue_assembleias': entregue_assembleias,
+    }
+    
+    # Renderiza o template com o contexto
+    return render(request, 'adm/assembleia/home_id.html', context)
 
 @login_required
 def home_assembleias(request):

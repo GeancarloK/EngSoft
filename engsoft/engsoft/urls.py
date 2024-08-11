@@ -30,8 +30,11 @@ urlpatterns = [
     path('adm/moradores/', li.adm_lista_moradores, name='adm_lista_moradores'),
     path('adm/moradores/sindico/<int:pessoa_id>', li.tornar_sindico, name='adm_tornar_sindico'),
     path('adm/moradores/editar/<int:usuario_id>/', li.adm_editar_morador, name='adm_editar_morador'),
+    path('adm/morador/transformar/<int:pessoa_id>/', li.transformar_para_notpessoa, name='transformar_para_notpessoa'),
     path('adm/assembleia/', bl.home_assembleias, name='home_assembleias'),
+    path('adm/assembleia/<int:condominio_id>/', bl.home_assembleias_condominio, name='home_assembleias_condominio'),
     path('adm/assembleia/criar/', bl.adm_criar_assembleia, name='adm_criar_assembleia'),
+    path('adm/assembleia/criar/<int:condominio_id>/', bl.criar_assembleia_id, name='adm_criar_assembleia'),
     
     ##moradores
     path('user/home/', li.user_home, name='user_home'),
@@ -48,5 +51,6 @@ urlpatterns = [
     
     ##outros usuarios
     path('not_pessoa/home/', li.not_pessoa_home, name='not_pessoa_home'),
+    path('excluir-requisicao/<int:not_pessoa_id>/', li.excluir_requisicao, name='excluir_requisicao'),
     
 ]

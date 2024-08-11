@@ -261,7 +261,28 @@ def adm_editar_morador(request, usuario_id):
     
     return render(request, 'adm/editar_morador.html', {'form': form, 'pessoa': pessoa})
 
+@login_required
+def transformar_para_notpessoa(request, pessoa_id):
+    if request.method == 'POST':
+        pessoa = get_object_or_404(Pessoa, id=pessoa_id)
+        
+        # Criar o NotPessoa com os dados do Pessoa
+        not_pessoa = NotPessoa(
+            nome=pessoa.nome,
+            email=pessoa.email,
+            usuario=pessoa.usuario,
+            cpf=pessoa.cpf,
 
+        )
+        not_pessoa.save()
+        
+        # Deletar o objeto Pessoa
+        pessoa.delete()
+        
+        # Redirecionar para a lista de moradores ou onde for apropriado
+        return redirect('adm_lista_moradores')
+    else:
+        return redirect('adm_lista_moradores')
 
 
 
@@ -430,3 +451,17 @@ def adm_gerenciar_morador(request, pk):
             return redirect('adm_pendentes')
     
     return render(request, 'adm/gerenciar_conta.html', {'not_pessoa': not_pessoa})
+
+@login_required
+def excluir_requisicao(request, not_pessoa_id):
+    if request.method == 'POST':
+        not_pessoa = get_object_or_404(NotPessoa, id=not_pessoa_id)
+
+        not_pessoa.pendencia = None
+        not_pessoa.bloco = 1
+        not_pessoa.andar = 1
+        not_pessoa.apt = 1
+        not_pessoa.save()
+        
+        # Redirecionar para a página desejada após exclusão
+    return redirect('not_pessoa_home')  # ou qualquer URL apropriada

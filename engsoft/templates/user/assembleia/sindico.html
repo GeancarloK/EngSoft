@@ -66,16 +66,17 @@
                         <form method="get" action="{% url 'criar_votacao' assembleia.id %}">
                             <button type="submit" class="btn btn-primary">Criar Nova Votação</button>
                         </form>
+                        <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Finalizar</button>
+                        </form>
                     {% elif assembleia.status == 'finalizada' %}
                         <form method="post" action="{% url 'entregar_assembleia' assembleia.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-success">Entregar</button>
                         </form>
                     {% endif %}
-                    <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Finalizar</button>
-                    </form>
+                    
                 </li>
             {% endfor %}
             </ul>

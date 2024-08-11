@@ -59,7 +59,13 @@
         {% if pendencia %}
             <h5>Você tem uma pendência:</h5>
             <p><strong>Condomínio:</strong> {{ pendencia.nome }}</p>
-            <p><strong>Imóvel:</strong> {{ not_pessoa.andar }}{{ not_pessoa.apt |stringformat:"02d"}}-{{ not_pessoa.bloco }}</p>
+            <p><strong>Imóvel:</strong> {{ not_pessoa.andar }}{{ not_pessoa.apt | stringformat:"02d" }}-{{ not_pessoa.bloco }}</p>
+            
+            <!-- Botão "Excluir Requisição" aparece apenas se pendencia não for null -->
+            <form method="post" action="{% url 'excluir_requisicao' not_pessoa.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning">Excluir Requisição</button>
+            </form>
         {% else %}
             {% if messages %}
                 {% for message in messages %}

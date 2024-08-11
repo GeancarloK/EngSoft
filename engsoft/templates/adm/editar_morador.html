@@ -75,6 +75,10 @@
             
             <button type="submit" class="btn btn-primary">Salvar</button>
         </form>
+        <form method="post" action="{% url 'transformar_para_notpessoa' pessoa.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Excluir</button>
+        </form>
         <a href="{% url 'adm_lista_moradores' %}" class="btn btn-secondary mb-4">Voltar</a>
     </div>
     {% include "footer.html" %}

@@ -21,8 +21,9 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h2 class="mb-0">Condomínio: {{ condominio }}</h2>
+                    <a href="{% url 'home_assembleias_condominio' condominio.id %}" class="btn btn-info btn-sm">Ver Assembleias</a> <!-- Botão adicionado aqui -->
 
-                    <div class="container">
+                    <div class="container mt-2">
                         <p>Endereço: {{ condominio.endereco }}</p>
                         {% if condominio.nro_pisc > 0 or condominio.nro_acad > 0 or condominio.nro_lazer > 0 %}
                             <h4>Áreas de Lazer</h4>
