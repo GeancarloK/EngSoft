@@ -1,2 +1,14 @@
 /* import main CSS file*/
 @import "styles.css";
+
+.form-select-lg {
+    font-size: 1.25rem; /* Aumenta o tamanho da fonte */
+    padding: .75rem 1.25rem; /* Aumenta o padding para tornar o campo mais "gordo" */
+    border-width: 2px; /* Aumenta a largura da borda */
+}
+.form-label-lg {
+    font-size: 1.25rem; /* Aumenta o tamanho da fonte do rótulo */
+}
+.highlight-background {
+    background-color: var(--white); /* Fundo sutil para destacar o campo */
+}

@@ -5,54 +5,61 @@
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
 </head>
-<body>
-    <div class="header-login"></div>
+<body class="d-flex justify-content-center align-items-center vh-100 bg-blue">
     <div class="container">
-        <h1>Login</h1>
-    </div>
-    <div class="container">
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                <strong>Erro!</strong>
-                <ul>
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-        
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="id_username">Nome de usuário</label>
-                <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="id_username" name="username" value="">
-                {% if form.username.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in form.username.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Login</h2>
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>Erro!</strong>
+                                <ul>
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">Nome de usuário</label>
+                                <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="id_username" name="username" value="">
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.username.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="id_password" class="form-label">Senha</label>
+                                <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="id_password" name="password">
+                                {% if form.password.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 mb-2">Entrar</button>
+                            <a href="{% url 'index' %}" class="btn btn-secondary w-100">Voltar</a>
+                        </form>
                     </div>
-                {% endif %}
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label for="id_password">Senha</label>
-                <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="id_password" name="password">
-                {% if form.password.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in form.password.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Entrar</button>
-            <a href="{% url 'index' %}" class="btn btn-secondary">Voltar</a>
-        </form>
+        </div>
     </div>
-    {% include "footer.html" %}
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

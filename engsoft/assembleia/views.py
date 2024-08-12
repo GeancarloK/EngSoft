@@ -271,11 +271,11 @@ def user_assembleias(request):
             assembleia_id = request.POST.get('assembleia_id')
             print("Assembleia ID recebido:", assembleia_id)  # Verifique o ID aqui
 
-            try:
+            """try:
                 assembleia = Assembleia.objects.get(id=assembleia_id)
             except Assembleia.DoesNotExist:
                 messages.error(request, 'A assembleia selecionada não existe.')
-                return redirect('user_assembleias')
+                return redirect('user_assembleias')"""
 
             if action == 'fazer_requisicao':
                 context = {

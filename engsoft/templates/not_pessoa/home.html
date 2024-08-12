@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Requisição de Cadastro</title>
-    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
+    <link rel="stylesheet" href="{% static 'stylesheets/not_pessoa.css' %}">
     <script>
         function updateDetails() {
             var condominioSelect = document.getElementById('condominio');
@@ -48,94 +48,109 @@
     </script>
 </head>
 <body>
-    {% include "header.html" %}
-    <div class="container">
-        <h1>Bem-vindo, {{ not_pessoa.nome }}!</h1>
-    </div>
-    
-    <div class="container">
-        <h2>Requisição de Cadastro para {{ not_pessoa.nome }}</h2>
+    <div class="header-login"></div>
+    <!-- Container Principal -->
+    <div class="container my-5">
 
-        {% if pendencia %}
-            <h5>Você tem uma pendência:</h5>
-            <p><strong>Condomínio:</strong> {{ pendencia.nome }}</p>
-            <p><strong>Imóvel:</strong> {{ not_pessoa.andar }}{{ not_pessoa.apt | stringformat:"02d" }}-{{ not_pessoa.bloco }}</p>
-            
-            <!-- Botão "Excluir Requisição" aparece apenas se pendencia não for null -->
-            <form method="post" action="{% url 'excluir_requisicao' not_pessoa.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-warning">Excluir Requisição</button>
-            </form>
-        {% else %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            {% if error_message %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error_message }}
-                </div>
-            {% endif %}
+        <!-- Boas-vindas -->
+        <div class="text-center mb-4">
+            <h1 class="display-4">Bem-vindo, {{ not_pessoa.nome }}!</h1>
+        </div>
 
-            <form method="post">
-                {% csrf_token %}
+        <!-- Seção de Requisição de Cadastro -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Requisição de Cadastro</h2>
 
-                <!-- Primeira Parte: Seleção do Condomínio -->
-                <div id="condominio-section">
-                    <div class="form-group">
-                        <label for="condominio">Condomínio</label>
-                        <select class="form-control" id="condominio" name="condominio" required onchange="updateDetails()">
-                            <option value="">Selecione um Condomínio</option>
-                            {% for condominio in condominios %}
-                                <option value="{{ condominio.id }}" data-blocos="{{ condominio.nro_blocos }}" data-andares="{{ condominio.nro_andares }}" data-apartamentos="{{ condominio.nro_apt }}">{{ condominio.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="showDetails()">Confirmar Seleção</button>
-                </div>
-
-                <!-- Segunda Parte: Detalhes e Formulário Completo -->
-                <div id="details-section" style="display:none;">
-                    <h4>Condomínio Selecionado: <strong><span id="condominio-name"></span></strong></h4>
+                <!-- Exibição de Pendência -->
+                {% if pendencia %}
+                    <h5 class="mb-3">Você tem uma pendência:</h5>
+                    <ul class="list-unstyled mb-4">
+                        <li><strong>Condomínio:</strong> {{ pendencia.nome }}</li>
+                        <li><strong>Imóvel:</strong> {{ not_pessoa.andar }}{{ not_pessoa.apt | stringformat:"02d" }}-{{ not_pessoa.bloco }}</li>
+                    </ul>
                     
-                    <div id="blocos-section" style="display:none;">
-                        <div class="form-group">
-                            <label>Número de Blocos: <span id="max_blocos">N/A</span></label>
-                            <label for="bloco">Blocos</label>
-                            <input type="number" class="form-control" id="bloco" name="bloco" min="1" value="1">
+                    <!-- Botão Excluir Requisição -->
+                    <form method="post" action="{% url 'excluir_requisicao' not_pessoa.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning">Excluir Requisição</button>
+                    </form>
+                {% else %}
+                    <!-- Exibição de Mensagens -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if error_message %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ error_message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    </div>
+                    {% endif %}
 
-                    <div id="andares-section" style="display:none;">
-                        <div class="form-group">
-                            <label>Número de Andares: <span id="max_andares">N/A</span></label>
-                            <label for="andar">Andares</label>
-                            <input type="number" class="form-control" id="andar" name="andar" min="1" value="1">
+                    <!-- Formulário de Requisição -->
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Seleção do Condomínio -->
+                        <div id="condominio-section" class="mb-4">
+                            <div class="mb-3">
+                                <label for="condominio" class="form-label form-label-lg">Condomínio</label>
+                                <select class="form-select form-select-lg highlight-background" id="condominio" name="condominio" required onchange="updateDetails()">
+                                    <option value="">Selecione um Condomínio</option>
+                                    {% for condominio in condominios %}
+                                        <option value="{{ condominio.id }}" data-blocos="{{ condominio.nro_blocos }}" data-andares="{{ condominio.nro_andares }}" data-apartamentos="{{ condominio.nro_apt }}">{{ condominio.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="showDetails()">Confirmar Seleção</button>
                         </div>
-                    </div>
 
-                    <div id="apt-section" style="display:none;">
-                        <div class="form-group">
-                            <label>Número de Apartamentos: <span id="max_apt">N/A</span></label>
-                            <label for="apt">Apartamentos</label>
-                            <input type="number" class="form-control" id="apt" name="apt" min="1" value="1">
+                        <!-- Detalhes e Formulário Completo -->
+                        <div id="details-section" style="display:none;">
+                            <h4 class="mb-3">Condomínio Selecionado: <strong><span id="condominio-name"></span></strong></h4>
+                            
+                            <div id="blocos-section" class="mb-3" style="display:none;">
+                                <div class="mb-3">
+                                    <label class="form-label">Número de Blocos: <span id="max_blocos">N/A</span></label>
+                                    <label for="bloco" class="form-label">Blocos</label>
+                                    <input type="number" class="form-control" id="bloco" name="bloco" min="1" value="1">
+                                </div>
+                            </div>
+
+                            <div id="andares-section" class="mb-3" style="display:none;">
+                                <div class="mb-3">
+                                    <label class="form-label">Número de Andares: <span id="max_andares">N/A</span></label>
+                                    <label for="andar" class="form-label">Andares</label>
+                                    <input type="number" class="form-control" id="andar" name="andar" min="1" value="1">
+                                </div>
+                            </div>
+
+                            <div id="apt-section" class="mb-3" style="display:none;">
+                                <div class="mb-3">
+                                    <label class="form-label">Número de Apartamentos: <span id="max_apt">N/A</span></label>
+                                    <label for="apt" class="form-label">Apartamentos</label>
+                                    <input type="number" class="form-control" id="apt" name="apt" min="1" value="1">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Enviar Pedido</button>
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()">Alterar Condomínio</button>
                         </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Enviar Pedido</button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Alterar Condomínio</button>
-                </div>
-            </form>
-        {% endif %}
-    </div>
-    <div class="container">
-        <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
-    </div>
-    <div class="container">
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="container my-3">
+            <div class="d-flex justify-content-around">
+                <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+                <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
     </div>
     {% include "footer.html" %}
 </body>

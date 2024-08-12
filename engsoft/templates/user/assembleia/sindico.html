@@ -28,62 +28,97 @@
 </head>
 <body>
     {% include "header.html" %}
-    <div class="container">
-        <h1 class="my-4">Assembleias</h1>
-
+    <div class="container mt-4">
+        <h1 class="mb-4">Assembleias</h1>
+    
         {% if assembleias %}
-            <ul class="list-unstyled">
-            {% for assembleia in assembleias %}
-                <li class="assembleia-item">
-                    <h3>{{ assembleia.titulo }} - Status: {{ assembleia.get_status_display }}</h3>
-                    <p>{{ assembleia.descricao }}</p>
-
-                    {% if assembleia.status == 'criada' %}
-                        <form method="post" action="{% url 'iniciar_assembleia' assembleia.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary">Iniciar</button>
-                        </form>
-                    {% elif assembleia.status == 'iniciada' %}
-                        <h4>Requisições:</h4>
-                        <ul>
-                        {% for requisicao in assembleia.requisicoes.all %}
-                            <li><strong>{{ requisicao.titulo }}</strong> - {{ requisicao.descricao }}</li>
-                        {% endfor %}
-                        </ul>
-
-                        <h4>Resultados Parciais:</h4>
-                        <ul>
-                        {% for votacao in assembleia.votos.all %}
-                            <li><strong>{{ votacao.titulo }}</strong></li>
-                            <ul>
-                            {% for opcao in votacao.opcoes_votacao.all %}
-                                <li>{{ opcao.titulo }}: {{ opcao.votos }} votos</li>
-                            {% endfor %}
-                            </ul>
-                        {% endfor %}
-                        </ul>
-
-                        <form method="get" action="{% url 'criar_votacao' assembleia.id %}">
-                            <button type="submit" class="btn btn-primary">Criar Nova Votação</button>
-                        </form>
-                        <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Finalizar</button>
-                        </form>
-                    {% elif assembleia.status == 'finalizada' %}
-                        <form method="post" action="{% url 'entregar_assembleia' assembleia.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success">Entregar</button>
-                        </form>
-                    {% endif %}
-                    
-                </li>
-            {% endfor %}
-            </ul>
+            <div class="list-group">
+                {% for assembleia in assembleias %}
+                    <div class="list-group-item mb-4 p-3 border rounded">
+                        <h3 class="mb-2">{{ assembleia.titulo }} - <span class="badge bg-primary">{{ assembleia.get_status_display }}</span></h3>
+                        <p class="mb-3">{{ assembleia.descricao }}</p>
+    
+                        {% if assembleia.status == 'criada' %}
+                            <form method="post" action="{% url 'iniciar_assembleia' assembleia.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Iniciar</button>
+                            </form>
+                        {% elif assembleia.status == 'iniciada' %}
+                            <div class="mt-4">
+                                <h4>Requisições:</h4>
+                                {% if assembleia.requisicoes.all %}
+                                    <ul class="list-group">
+                                        {% for requisicao in assembleia.requisicoes.all %}
+                                            <li class="list-group-item">
+                                                <strong>{{ requisicao.titulo }}</strong> - {{ requisicao.descricao }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Nenhuma requisição registrada.</p>
+                                {% endif %}
+                            </div>
+    
+                            <div class="mt-4">
+                                <h4>Resultados Parciais:</h4>
+                                {% if assembleia.votos.all %}
+                                    <ul class="list-group">
+                                        {% for votacao in assembleia.votos.all %}
+                                            <li class="list-group-item">
+                                                <strong>{{ votacao.titulo }}</strong>
+                                                <ul class="list-group mt-2">
+                                                    {% with max_votes=0 max_opcao=None %}
+                                                        {% for opcao in votacao.opcoes_votacao.all %}
+                                                            {% if opcao.votos > max_votes %}
+                                                                {% with max_votes=opcao.votos max_opcao=opcao %}
+                                                                {% endwith %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                        {% for opcao in votacao.opcoes_votacao.all %}
+                                                            <li class="list-group-item {% if opcao == max_opcao %} bg-success text-white {% endif %}">
+                                                                {{ opcao.titulo }}: {{ opcao.votos }} votos
+                                                            </li>
+                                                        {% endfor %}
+                                                    {% endwith %}
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Não há resultados parciais disponíveis.</p>
+                                {% endif %}
+                            </div>
+    
+                            <div class="mt-4">
+                                <form method="get" action="{% url 'criar_votacao' assembleia.id %}" class="d-inline">
+                                    <button type="submit" class="btn btn-primary">Criar Nova Votação</button>
+                                </form>
+                                <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Finalizar</button>
+                                </form>
+                            </div>
+                        {% elif assembleia.status == 'finalizada' %}
+                            <div class="mt-4">
+                                <h4>Adicionar Comentários para o Relatório:</h4>
+                                <form method="post" action="{% url 'entregar_assembleia' assembleia.id %}">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="resumo">Resumo da Assembleia:</label>
+                                        <textarea class="form-control" id="resumo" name="resumo" rows="5" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Salvar Comentários e Entregar Assembleia</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
         {% else %}
             <p>Não há assembleias acontecendo no momento.</p>
         {% endif %}
-
+    
         <!-- Botão para voltar para a home -->
         <div class="mt-4">
             <a href="{% url 'user_home' %}" class="btn btn-secondary">Voltar</a>

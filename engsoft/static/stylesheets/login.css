@@ -11,12 +11,6 @@ a.alert:hover {
     color: var(--SEF-orange);
 }
 
-.header-login {
-    background-color: var(--blue);
-    height: 90px;
-    width: 100vw;
-}
-
 .frontpage {
     display: flex;
     flex-direction: row;
@@ -61,6 +55,7 @@ a.alert:hover {
 
 .logo img {
     width: 80%;
+    max-width:720px;
 }
 
 /* Media query para telas pequenas (celulares) */
@@ -82,5 +77,16 @@ a.alert:hover {
 @media screen and (max-width: 1290px) {
     .logo h1 {
         font-size: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-group {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .form-group .col-md-6 {
+        width: 100%;
+        margin-bottom: 1rem;
     }
 }

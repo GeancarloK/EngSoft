@@ -7,26 +7,32 @@
 </head>
 <body>
     {% include "header.html" %}
-    <div class="container">
-        <h1>Aprovar Morador</h1>
-        <p><strong>Nome:</strong> {{ not_pessoa.nome }}</p>
-        <p><strong>Email:</strong> {{ not_pessoa.email }}</p>
-        <p><strong>CPF:</strong> {{ not_pessoa.cpf }}</p>
-        <p><strong>Condomínio:</strong> {{ not_pessoa.pendencia.nome }}</p>
-        <p><strong>Bloco:</strong> {{ not_pessoa.bloco }}</p>
-        <p><strong>Andar:</strong> {{ not_pessoa.andar }}</p>
-        <p><strong>Apartamento:</strong> {{ not_pessoa.apt }}</p>
+    <div class="container mt-4">
+        <h1 class="mb-4">Aprovar Morador</h1>
         
-        <form method="post" action="{% url 'adm_gerenciar_morador' not_pessoa.pk %}">
-            {% csrf_token %}
-            <button type="submit" name="aprovar" class="btn btn-primary">Aprovar</button>
-        </form>
+        <div class="card mb-4">
+            <div class="card-body">
+                <p><strong>Nome:</strong> {{ not_pessoa.nome }}</p>
+                <p><strong>Email:</strong> {{ not_pessoa.email }}</p>
+                <p><strong>CPF:</strong> {{ not_pessoa.cpf }}</p>
+                <p><strong>Condomínio:</strong> {{ not_pessoa.pendencia.nome }}</p>
+                <p><strong>Bloco:</strong> {{ not_pessoa.bloco }}</p>
+                <p><strong>Andar:</strong> {{ not_pessoa.andar }}</p>
+                <p><strong>Apartamento:</strong> {{ not_pessoa.apt }}</p>
+            </div>
+        </div>
         
-        <form method="post" action="{% url 'adm_gerenciar_morador' not_pessoa.pk %}">
-            {% csrf_token %}
-            <button type="submit" name="negar" class="btn btn-danger">Negar Requisição</button>
-        </form>
-        
+        <div class="d-flex gap-3 mb-4">
+            <form method="post" action="{% url 'adm_gerenciar_morador' not_pessoa.pk %}" class="flex-grow-1">
+                {% csrf_token %}
+                <button type="submit" name="aprovar" class="btn btn-success w-100">Aprovar</button>
+            </form>
+            <form method="post" action="{% url 'adm_gerenciar_morador' not_pessoa.pk %}" class="flex-grow-1">
+                {% csrf_token %}
+                <button type="submit" name="negar" class="btn btn-danger w-100">Negar Requisição</button>
+            </form>
+        </div>
+
         <a href="{% url 'adm_pendentes' %}" class="btn btn-secondary">Voltar</a>
     </div>
     {% include "footer.html" %}

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from django.core.exceptions import ValidationError
+from datetime import timedelta
 import re
 
 class Construtora(models.Model):
@@ -23,15 +25,14 @@ class Condominio(models.Model):
     nro_andares = models.IntegerField(default=1)
     nro_apt = models.IntegerField(default=1)
     nro_lazer = models.IntegerField(default=0)
-    nro_acad = models.IntegerField(default=0)
-    nro_pisc = models.IntegerField(default=0)
+    has_acad = models.BooleanField(default=False)
+    has_pisc = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'condomínios'
     
     def __str__(self):
         return self.nome
-    
 
 def validate_cpf(value):
     if not re.match(r'^\d{11}$', value):
@@ -104,3 +105,17 @@ class NotPessoa(models.Model):
     def __str__(self):
         return self.nome
     
+
+
+class AreaLazer(models.Model):
+    num = models.IntegerField(default=0)
+    condominio = models.ForeignKey('Condominio', on_delete=models.CASCADE, related_name='areas_lazer_condominio')
+    pessoa = models.ForeignKey('Pessoa', on_delete=models.CASCADE, related_name='areas_lazer_pessoa', blank=True, null=True)
+    inicio = models.DateTimeField(default=timezone.now)
+    fim = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name_plural = 'areas de lazer'
+
+    def __str__(self):
+        return f'{self.condominio.nome} - {self.num}'

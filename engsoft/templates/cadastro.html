@@ -5,116 +5,148 @@
     <title>Cadastro</title>
     <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
 </head>
-<body>
-    <div class="header-login"></div>
-    <div class="container">
-        <h2>Cadastro</h2>
-        
-        <!-- Exibição de mensagens de erro gerais -->
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                <strong>Erro!</strong>
-                <ul>
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
+<body class="bg-blue">
 
-        <form method="post">
-            {% csrf_token %}
-            
-            <!-- Campos do formulário com mensagens de erro -->
-            <div class="form-group">
-                {{ form.username.label_tag }}
-                <input type="text" class="form-control" id="username" name="username" value="">
-                {% if form.username.errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.username.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                {{ form.email.label_tag }}
-                <input type="email" class="form-control" id="email" name="email" placeholder="{{ form.email.field.widget.attrs.placeholder }}" value="">
-                {% if form.email.errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.email.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+    <!-- Container para o formulário -->
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="row justify-content-center w-100">
+            <div class="col-md-10 col-lg-8 col-xl-6">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4">Cadastro</h2>
+                        
+                        <!-- Exibição de mensagens de erro gerais -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>Erro!</strong>
+                                <ul>
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <!-- Ordem visual dos campos -->
+                            <div class="row g-3">
+                                <!-- Campos de Usuário e Senha -->
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        {{ form.username.label_tag }}
+                                        <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="username" name="username" value="">
+                                        {% if form.username.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.username.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.password.label_tag }}
+                                        <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="password" name="password">
+                                        {% if form.password.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.password.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.password2.label_tag }}
+                                        <input type="password" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" id="password2" name="password2">
+                                        {% if form.password2.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.password2.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Campos de Nome e CPF -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.nome.label_tag }}
+                                        <input type="text" class="form-control {% if form.nome.errors %}is-invalid{% endif %}" id="nome" name="nome" value="">
+                                        {% if form.nome.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.nome.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.cpf.label_tag }}
+                                        <input type="text" class="form-control {% if form.cpf.errors %}is-invalid{% endif %}" id="cpf" name="cpf" value="{{ form.cpf.value }}">
+                                        {% if form.cpf.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.cpf.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Campos de Email -->
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        {{ form.email.label_tag }}
+                                        <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" placeholder="{{ form.email.field.widget.attrs.placeholder }}" value="">
+                                        {% if form.email.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.email.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                {{ form.email2.label_tag }}
-                <input type="email" class="form-control" id="email2" name="email2" placeholder="{{ form.email2.field.widget.attrs.placeholder }}" value="">
-                {% if form.email2.errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.email2.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        {{ form.email2.label_tag }}
+                                        <input type="email" class="form-control {% if form.email2.errors %}is-invalid{% endif %}" id="email2" name="email2" placeholder="{{ form.email2.field.widget.attrs.placeholder }}" value="">
+                                        {% if form.email2.errors %}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.email2.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
 
-            <div class="form-group">
-                {{ form.password.label_tag }}
-                <input type="password" class="form-control" id="password" name="password">
-                {% if form.password.errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.password.errors %}
-                            {{ error }}
-                        {% endfor %}
+                                <!-- Botões -->
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary w-100 mb-3">Cadastrar</button>
+                                    <a href="{% url 'index' %}" class="btn btn-secondary w-100">Voltar</a>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                {% endif %}
+                </div>
             </div>
-
-            <div class="form-group">
-                {{ form.password2.label_tag }}
-                <input type="password" class="form-control" id="password2" name="password2">
-                {% if form.password2.errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.password2.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <!-- Adicionando campos restantes -->
-            <div class="form-group">
-                {{ form.nome.label_tag }}
-                <input type="text" class="form-control" id="nome" name="nome" value="">
-                {% if form.nome.errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.nome.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="form-group">
-                {{ form.cpf.label_tag }}
-                <input type="text" class="form-control" id="cpf" name="cpf" value="{{ form.cpf.value }}">
-                {% if form.cpf.errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.cpf.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-
-            <button type="submit" class="btn btn-primary mb-4">Cadastrar</button>
-            <a href="{% url 'index' %}" class="btn btn-secondary mb-4">Voltar</a>
-        </form>
+        </div>
     </div>
-    {% include "footer.html" %}
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

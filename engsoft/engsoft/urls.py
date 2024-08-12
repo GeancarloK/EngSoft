@@ -40,6 +40,9 @@ urlpatterns = [
     path('user/home/', li.user_home, name='user_home'),
     path('user/assembleias/', bl.user_assembleias, name='user_assembleias'),
     path('user/assembleias/votar/', bl.user_votar, name='user_votar'),
+    path('user/areas-lazer/', li.areas_lazer_view, name='areas_lazer_list'),
+    path('reservar-area-lazer/', li.reservar_area_lazer, name='reservar_area_lazer'),
+    path('finalizar-reserva/', li.finalizar_reserva, name='finalizar_reserva'),
 
     ##sindico
     path('user/assembleia/sindico/', bl.sindico_assembleias, name='sindico_assembleias'),
