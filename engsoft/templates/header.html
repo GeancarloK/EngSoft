@@ -15,6 +15,7 @@
                 <div class="identificacao">
                     {% if user_type == 'construtora' %}
                         <h4>{{ construtora_nome }}</h4>
+                        <p>{{ construtora.endereco }}</p>
                     {% elif user_type == 'pessoa' %}
                         <h4>{{ pessoa.nome }}{% if pessoa.sindico %} <i>(Síndico)</i>{% endif %}</h4>
                         <p>{{ pessoa.condominio }}</p>
@@ -33,21 +34,22 @@
         <div class="opcoes-container">
             <div class="opcoes">
                 {% if user_type == 'construtora' %}
-                    <a href="#">Criar prédio</a>
-                    <a href="#">Gerenciar imóveis</a>
-                    <a href="#">Assembleias</a>
-                    <a href="#">Pendentes</a>
+                    <a href="{% url 'adm_criar_predio' %}">Criar prédio</a>
+                    <a href="{% url 'adm_lista_moradores' %}">Gerenciar imóveis</a>
+                    <a href="{% url 'home_assembleias' %}">Assembleias</a>
+                    <a href="{% url 'adm_pendentes' %}">Pendentes</a>
                 {% elif user_type == 'pessoa' %}
-                    <a href="#">Editar perfil</a>
+                    <a href="{% url 'editar_perfil' %}">Editar perfil</a>
                     {% if pessoa.sindico %} <!--Sindico-->
-                        <a href="#">Gerenciar Assembleias</a>
+                        <a href="{% url 'sindico_assembleias' %}">Gerenciar Assembleias</a>
                     {% else %} <!--Morador comum-->
-                        <a href="#">Assembleias</a>
+                        <a href="{% url 'user_assembleias' %}">Assembleias</a>
                     {% endif %} <!--Tanto síndico quanto morador-->
+                    <a href="{% url 'areas_lazer_list' %}">Áreas de Lazer</a>
                 {% elif user_type == 'not_pessoa' %}
                     <!--Permanece em branco-->
                 {% endif %}
-                    <a href="#">Logout</a>
+                    <a href="{% url 'logout' %}">Logout</a>
             </div>
         </div>
     </div>

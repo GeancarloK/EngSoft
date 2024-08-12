@@ -35,14 +35,16 @@ urlpatterns = [
     path('adm/assembleia/<int:condominio_id>/', bl.home_assembleias_condominio, name='home_assembleias_condominio'),
     path('adm/assembleia/criar/', bl.adm_criar_assembleia, name='adm_criar_assembleia'),
     path('adm/assembleia/criar/<int:condominio_id>/', bl.criar_assembleia_id, name='adm_criar_assembleia'),
+    path('adm/enviar_ata/<int:assembleia_id>/', bl.enviar_ata, name='enviar_ata'),
     
     ##moradores
     path('user/home/', li.user_home, name='user_home'),
     path('user/assembleias/', bl.user_assembleias, name='user_assembleias'),
     path('user/assembleias/votar/', bl.user_votar, name='user_votar'),
     path('user/areas-lazer/', li.areas_lazer_view, name='areas_lazer_list'),
-    path('reservar-area-lazer/', li.reservar_area_lazer, name='reservar_area_lazer'),
-    path('finalizar-reserva/', li.finalizar_reserva, name='finalizar_reserva'),
+    path('user/reservar-area-lazer/', li.reservar_area_lazer, name='reservar_area_lazer'),
+    path('user/finalizar-reserva/', li.finalizar_reserva, name='finalizar_reserva'),
+    path('user/atas/', li.atas_list, name='atas_list'),
 
     ##sindico
     path('user/assembleia/sindico/', bl.sindico_assembleias, name='sindico_assembleias'),
@@ -51,6 +53,9 @@ urlpatterns = [
     path('user/assembleia/entregar/<int:assembleia_id>/', bl.entregar_assembleia, name='entregar_assembleia'),
     path('user/assembleia/votacao/criar/<int:assembleia_id>/', bl.criar_votacao, name='criar_votacao'),
     path('user/entrar_assembleia/<int:assembleia_id>/', bl.entrar_assembleia, name='entrar_assembleia'),
+    path('user/areas-lazer/bloquear/<int:area_id>/', li.bloquear_area_lazer, name='bloquear_area_lazer'),
+    path('user/areas-lazer/desbloquear/<int:area_id>/', li.desbloquear_area_lazer, name='desbloquear_area_lazer'),
+    
     
     ##outros usuarios
     path('not_pessoa/home/', li.not_pessoa_home, name='not_pessoa_home'),

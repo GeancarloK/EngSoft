@@ -110,6 +110,11 @@ h1 {
     border-color: var(--blue);
 }
 
+.bg-secondary {
+    background-color: var(--gray)!important;
+    color: white;
+}
+
 .btn-success {
     background-color: var(--green);
     color: white;
@@ -120,6 +125,11 @@ h1 {
     background-color: white;
     color: var(--blue);
     border-color: var(--blue);
+}
+
+.bg-success {
+    background-color: var(--green)!important;
+    color: white;
 }
 
 .btn-danger {
@@ -134,6 +144,11 @@ h1 {
     border-color: var(--red);
 }
 
+.bg-danger {
+    background-color: var(--red)!important;
+    color: white;
+}
+
 .btn-warning {
     background-color: var(--yellow);
     color: white;
@@ -144,6 +159,10 @@ h1 {
     background-color: white;
     color: var(--yellow);
     border-color: var(--yellow);
+}
+
+.bg-yellow {
+    background-color: var(--yellow)!important;
 }
 
 .btn-light {

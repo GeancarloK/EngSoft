@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
 from django.template.defaulttags import register
-from .models import Votacao, Assembleia, Registro, OpcaoVotacao, Requisicao, Voto
+from .models import Votacao, Assembleia, Registro, OpcaoVotacao, Requisicao, Voto, Ata
 from .forms import AssembleiaForm
 from login.models import Construtora, Condominio, Pessoa
 from login.views import user_home_redirect
@@ -196,16 +196,28 @@ def entrar_assembleia(request, assembleia_id):
 
 @login_required
 def home_assembleias_condominio(request, condominio_id):
-    # Tenta obter o condomínio ou retorna um erro 404 se não for encontrado
-    condominio = get_object_or_404(Condominio, id=condominio_id)
+    permissao_construtora(request)
     
-    # Obtém assembleias com base no status
-    criada_assembleias = Assembleia.objects.filter(condominio=condominio, status='criada')
-    iniciada_assembleias = Assembleia.objects.filter(condominio=condominio, status='iniciada')
-    finalizada_assembleias = Assembleia.objects.filter(condominio=condominio, status='finalizada')
-    entregue_assembleias = Assembleia.objects.filter(condominio=condominio, status='entregue')
-    
-    # Prepara o contexto para o template
+    try:
+        construtora = Construtora.objects.get(administrador=request.user)
+    except Construtora.DoesNotExist:
+        messages.error(request, 'Você não tem permissão para acessar esta página.')
+        return redirect('user_home')  # Ajuste a URL para onde você quer redirecionar
+
+    condominio = get_object_or_404(Condominio, id=condominio_id, construtora=construtora)
+
+    assembleias = Assembleia.objects.filter(condominio=condominio).select_related('criado_por').prefetch_related('registros')
+
+    # Filtrando assembleias por status
+    criada_assembleias = assembleias.filter(status='criada').order_by('-data_criacao')
+    iniciada_assembleias = assembleias.filter(status='iniciada').order_by('-data_criacao')
+    finalizada_assembleias = assembleias.filter(status='finalizada').order_by('-data_criacao')
+    entregue_assembleias = assembleias.filter(status='entregue').order_by('-data_criacao')
+
+    # Adiciona a verificação se existe ata para cada assembleia
+    for assembleia in assembleias:
+        assembleia.tem_ata = assembleia.registros.filter(ata__isnull=False).exists()
+
     context = {
         'condominio': condominio,
         'criada_assembleias': criada_assembleias,
@@ -213,8 +225,6 @@ def home_assembleias_condominio(request, condominio_id):
         'finalizada_assembleias': finalizada_assembleias,
         'entregue_assembleias': entregue_assembleias,
     }
-    
-    # Renderiza o template com o contexto
     return render(request, 'adm/assembleia/home_id.html', context)
 
 @login_required
@@ -233,19 +243,60 @@ def home_assembleias(request):
     ).select_related('criado_por').prefetch_related('registros')
 
     # Filtrando assembleias por status
-    criada_assembleias = assembleias.filter(status='criada').order_by('data_criacao')
-    iniciada_assembleias = assembleias.filter(status='iniciada').order_by('data_criacao')
-    finalizada_assembleias = assembleias.filter(status='finalizada').order_by('data_criacao')
-    entregue_assembleias = assembleias.filter(status='entregue').order_by('data_criacao')
-    
+    criada_assembleias = assembleias.filter(status='criada').order_by('-data_criacao')
+    iniciada_assembleias = assembleias.filter(status='iniciada').order_by('-data_criacao')
+    finalizada_assembleias = assembleias.filter(status='finalizada').order_by('-data_criacao')
+    entregue_assembleias = assembleias.filter(status='entregue').order_by('-data_criacao')
+
+    # Adiciona a verificação se existe ata para cada assembleia
+    for assembleia in assembleias:
+        assembleia.tem_ata = assembleia.registros.filter(ata__isnull=False).exists()
+
     context = {
         'criada_assembleias': criada_assembleias,
         'iniciada_assembleias': iniciada_assembleias,
         'finalizada_assembleias': finalizada_assembleias,
         'entregue_assembleias': entregue_assembleias,
+        'assembleias': assembleias,  # Adiciona assembleias ao contexto
     }
     return render(request, 'adm/assembleia/home.html', context)
 
+
+@login_required
+def enviar_ata(request, assembleia_id):
+    assembleia = get_object_or_404(Assembleia, id=assembleia_id)
+
+    # Encontra o último registro associado à assembleia
+    registro = Registro.objects.filter(assembleia=assembleia).last()
+
+    # Verifica se registro é None antes de tentar acessar __dict__
+    if registro:
+        print("Assembleia Data:", assembleia.__dict__)
+        print("Registro Data:", registro.__dict__)
+    else:
+        print("Nenhum registro encontrado para a assembleia.")
+
+    if request.method == "POST":
+        if registro:  # Verifica se existe um registro
+            texto = request.POST.get("ata")
+            if texto:  # Verifica se o texto da ata foi enviado
+                # Cria um novo objeto Ata e associa ao registro
+                ata = Ata.objects.create(
+                    nome=f"{assembleia.titulo} - {assembleia.data_criacao.strftime('%H:%M - %d/%m/%Y')} - {assembleia.condominio.nome}",
+                    texto=texto
+                )
+                registro.ata = ata
+                registro.save()  # Salva o registro atualizado
+                # Redireciona para a página da assembleia com uma mensagem de sucesso
+                messages.success(request, "Ata enviada com sucesso.")
+            else:
+                # Redireciona para a página da assembleia com uma mensagem de erro
+                messages.error(request, "O texto da ata não pode estar vazio.")
+        else:
+            # Redireciona para a página da assembleia com uma mensagem de erro
+            messages.error(request, "Nenhum registro encontrado para a assembleia.")
+    
+    return redirect('home_assembleias')
 
 
 @register.filter

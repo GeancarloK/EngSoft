@@ -53,24 +53,40 @@
                             </form>
                         {% else %}
                             <!-- Mostrar botão de reservado se o usuário não for o reservador -->
-                            <a href="#" class="btn btn-danger float-right">Reservado</a>
+                            <a href="#" class="btn btn-secondary float-right">Reservado</a>
                         {% endif %}
                         <p class="text-danger">Data e Hora de Término: {{ area_info.fim|date:"d/m/Y H:i" }}</p>
                     {% else %}
-                        <a href="#" class="btn btn-success float-right">Livre</a>
-                        <form action="{% url 'reservar_area_lazer' %}" method="post" class="form-inline mt-2">
-                            {% csrf_token %}
-                            <p class="text">Tempo de reserva:</p>
-                            <input type="hidden" name="area_num" value="{{ area_info.num }}">
-                            <div class="form-group">
-                                <label for="numero" class="sr-only">Número de Horas:</label>
-                                <input type="number" id="numero" name="numero" min="1" max="12" class="form-control" required>
-                                <div class="invalid-feedback">
-                                    O número deve estar entre 1 e 12.
+                        <!-- Mostrar apenas se a área não estiver bloqueada -->
+                        {% if area_info.bloqueado %}
+                            <a href="#" class="btn btn-danger float-right">Bloqueada</a>
+                            {% if is_sindico %}
+                                <!-- Adiciona botão para desbloquear área -->
+                                <form action="{% url 'desbloquear_area_lazer' area_info.id %}" method="post" class="form-inline mt-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary float-right">Desbloquear</button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <a href="#" class="btn btn-success float-right">Livre</a>
+                            <form action="{% url 'reservar_area_lazer' %}" method="post" class="form-inline mt-2">
+                                {% csrf_token %}
+                                <p class="text">Tempo de reserva: </p>
+                                <input type="hidden" name="area_num" value="{{ area_info.num }}">
+                                <div class="form-group">
+                                    <label for="numero" class="sr-only">Número de Horas:</label>
+                                    <input type="number" id="numero" name="numero" min="1" max="12" class="form-control" required>
+                                    <div class="invalid-feedback">
+                                        O número deve estar entre 1 e 12.
+                                    </div>
                                 </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Reservar</button>
-                        </form>
+                                <button type="submit" class="btn btn-primary">Reservar</button>
+                                {% if is_sindico %}
+                                    <a href="{% url 'bloquear_area_lazer' area_info.id %}" class="btn btn-danger float-right">Bloquear</a>
+                                {% endif %}
+                            </form>
+                        {% endif %}
+
                     {% endif %}
                 </li>
             {% empty %}
@@ -84,4 +100,3 @@
     {% include "footer.html" %}
 </body>
 </html>
-

@@ -57,7 +57,7 @@ class Pessoa(models.Model):
     email = models.EmailField(max_length=200)
     data = models.DateTimeField(auto_now_add=True)
     cpf = models.CharField(max_length=11, validators=[validate_cpf], default = "00000000000")
-    sindico = models.BooleanField("Síndico")
+    sindico = models.BooleanField("Síndico", default = False)
     bloco = models.IntegerField(default = 1)
     andar = models.IntegerField(default = 1)
     apt = models.IntegerField(default = 1)
@@ -76,17 +76,6 @@ class Pessoa(models.Model):
 
     def __str__(self):
         return self.nome
-    
-class Relatorio(models.Model):
-    titulo = models.CharField(max_length=200)
-    data = models.DateTimeField(auto_now_add=True)
-    texto = models.TextField()
-    condominio = models.ForeignKey(Condominio, on_delete=models.CASCADE)
-    class Meta:
-        verbose_name_plural = 'relatorios'
-
-    def __str__(self):
-        return self.titulo
     
 class NotPessoa(models.Model):
     nome = models.CharField(max_length=200)
@@ -113,6 +102,7 @@ class AreaLazer(models.Model):
     pessoa = models.ForeignKey('Pessoa', on_delete=models.CASCADE, related_name='areas_lazer_pessoa', blank=True, null=True)
     inicio = models.DateTimeField(default=timezone.now)
     fim = models.DateTimeField(default=timezone.now)
+    bloqueado = models.BooleanField("Bloqueado", default = False)
 
     class Meta:
         verbose_name_plural = 'areas de lazer'

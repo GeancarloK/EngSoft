@@ -32,6 +32,12 @@
             <a href="{% url 'areas_lazer_list' %}" class="btn btn-primary">Ver Áreas de Lazer</a>
         </div>
     {% endif %}
+    <!-- Verifica se há atas associadas ao condomínio -->
+    {% if atas_existentes %}
+        <div class="container">
+            <a href="{% url 'atas_list' %}" class="btn btn-primary">Ver Atas</a>
+        </div>
+    {% endif %}
     <div class="container">
         <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
     </div>

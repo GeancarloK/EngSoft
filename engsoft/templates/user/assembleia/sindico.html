@@ -34,14 +34,26 @@
         {% if assembleias %}
             <div class="list-group">
                 {% for assembleia in assembleias %}
-                    <div class="list-group-item mb-4 p-3 border rounded">
-                        <h3 class="mb-2">{{ assembleia.titulo }} - <span class="badge bg-primary">{{ assembleia.get_status_display }}</span></h3>
-                        <p class="mb-3">{{ assembleia.descricao }}</p>
+                    <div class="list-group-item mb-4 p-3 border rounded
+                    {% if assembleia.status == 'criada' %} d-flex p-2 justify-content-between {% endif %}">
+                        <div>
+                            <h3 class="mb-2">{{ assembleia.titulo }} - <span class="badge bg-{% if assembleia.status == 'criada' %}success{% elif assembleia.status == 'finalizada' %}warning{% else %}primary{% endif %}">{{ assembleia.get_status_display }}</span></h3>
+                            <p class="mb-3">
+                                {% if assembleia.status == 'criada' %}
+                                    Criada: {{ assembleia.data_criacao }}
+                                {% else %}
+                                    Iniciada: {{ assembleia.data_inicio }}
+                                {% endif %}
+                                {% if assembleia.status == 'finalizada' %}
+                                     - Finalizada: {{ assembleia.data_finalizacao }}
+                                {% endif %}
+                            </p>
+                        </div>
     
                         {% if assembleia.status == 'criada' %}
                             <form method="post" action="{% url 'iniciar_assembleia' assembleia.id %}" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">Iniciar</button>
+                                <button type="submit" class="btn btn-success btn-lg">Iniciar</button>
                             </form>
                         {% elif assembleia.status == 'iniciada' %}
                             <div class="mt-4">
@@ -90,14 +102,20 @@
                                 {% endif %}
                             </div>
     
-                            <div class="mt-4">
-                                <form method="get" action="{% url 'criar_votacao' assembleia.id %}" class="d-inline">
-                                    <button type="submit" class="btn btn-primary">Criar Nova Votação</button>
-                                </form>
-                                <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">Finalizar</button>
-                                </form>
+                            <div class="container mt-4">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <form method="get" action="{% url 'criar_votacao' assembleia.id %}">
+                                            <button type="submit" class="btn btn-primary w-100">Criar Nova Votação</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-6">
+                                        <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger w-100">Finalizar</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         {% elif assembleia.status == 'finalizada' %}
                             <div class="mt-4">
@@ -108,7 +126,9 @@
                                         <label for="resumo">Resumo da Assembleia:</label>
                                         <textarea class="form-control" id="resumo" name="resumo" rows="5" required></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-success">Salvar Comentários e Entregar Assembleia</button>
+                                    <button type="submit" class="btn btn-success w-100 mt-3">
+                                        Salvar Comentários e Entregar Assembleia
+                                    </button>
                                 </form>
                             </div>
                         {% endif %}

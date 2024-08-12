@@ -57,12 +57,22 @@ class Voto(models.Model):
     def __str__(self):
         return f"{self.morador} votou em {self.opcao.titulo} na votação {self.votacao.titulo}"
 
+class Ata(models.Model):
+    nome = models.CharField(max_length=200)
+    texto = models.TextField()
+    def __str__(self):
+        return self.nome
+    
+
 class Registro(models.Model):
     assembleia = models.ForeignKey(Assembleia, on_delete=models.CASCADE, related_name='registros')
     resumo = models.TextField()
     detalhes_votacoes = models.TextField()
     data_criacao = models.DateTimeField(null=True, blank=True)
     data_finalizacao = models.DateTimeField(null=True, blank=True)
+    ata = models.ForeignKey(Ata, on_delete=models.CASCADE, related_name='ata', null=True, blank=True)
 
     def __str__(self):
         return f"Registro de {self.assembleia.titulo}"
+    
+

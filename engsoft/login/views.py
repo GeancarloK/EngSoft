@@ -15,7 +15,7 @@ from django.utils import timezone
 from datetime import timedelta
 from . import views
 from .forms import PessoaForm, SignUpForm, ProfileUpdateForm, AdmMoradorForm
-from assembleia.models import Assembleia
+from assembleia.models import Assembleia, Ata, Registro
 
 
 #import json
@@ -143,7 +143,12 @@ def adm_criar_predio(request):
     if request.method == 'POST':
         nome_predio = request.POST.get('nome_predio')
         endereco_predio = request.POST.get('endereco_predio')
-        nro_lazer = int(request.POST.get('nro_lazer', 0))  # Obtém o número de áreas de lazer
+        nro_blocos = int(request.POST.get('nro_blocos', 1))  # Número de blocos
+        nro_andares = int(request.POST.get('nro_andares', 1))  # Número de andares
+        nro_apt = int(request.POST.get('nro_apt', 1))  # Número de apartamentos por andar
+        nro_lazer = int(request.POST.get('nro_lazer', 0))  # Número de áreas de lazer
+        has_acad = request.POST.get('has_acad') == 'on'  # Checkbox da academia
+        has_pisc = request.POST.get('has_pisc') == 'on'  # Checkbox da piscina
 
         if nome_predio and endereco_predio:
             # Obter a construtora do usuário autenticado
@@ -151,7 +156,13 @@ def adm_criar_predio(request):
             condominio = Condominio.objects.create(
                 nome=nome_predio,
                 endereco=endereco_predio,
-                construtora=construtora
+                construtora=construtora,
+                nro_blocos=nro_blocos,
+                nro_andares=nro_andares,
+                nro_apt=nro_apt,
+                nro_lazer=nro_lazer,
+                has_acad=has_acad,
+                has_pisc=has_pisc
             )
             
             # Criar as áreas de lazer
@@ -166,7 +177,8 @@ def adm_criar_predio(request):
             
             return redirect('adm_home')
 
-    return render(request, 'adm/criarpredio.html', {'user_type': get_user_type(request.user)})
+    return render(request, 'adm/criarpredio.html', {'user_type': get_user_type(request.user), 'nome_predio': nome_predio})
+
 
 
 
@@ -221,6 +233,7 @@ def adm_home(request):
         # Adiciona a informação ao contexto
         context = {
             'construtora_nome': construtora_nome,
+            'construtora': construtora,
             'pendencias_existentes': pendencias_existentes,
             'user_type': get_user_type(request.user)
         }
@@ -228,6 +241,7 @@ def adm_home(request):
     except Construtora.DoesNotExist:
         context = {
             'construtora_nome': "Nome da Construtora Não Encontrado",
+            'construtora': construtora,
             'pendencias_existentes': False,
             'user_type': get_user_type(request.user)
         }
@@ -364,7 +378,6 @@ def choose_home(user):
         return 'not_pessoa_home'
     
     return 'logoff'
-
 @login_required
 def user_home(request):
     try:
@@ -380,15 +393,37 @@ def user_home(request):
 
         # Verifica se há áreas de lazer associadas ao condomínio
         areas_lazer = AreaLazer.objects.filter(condominio=pessoa.condominio).exists()
+
+        # Verifica se há atas associadas ao condomínio
+        atas_existentes = Ata.objects.filter(
+            registro__assembleia__condominio=pessoa.condominio
+        ).exists()
     else:
         assembleia_iniciada = None
         areas_lazer = False
+        atas_existentes = False
 
     return render(request, 'user/home.html', {
         'pessoa': pessoa,
         'assembleia_iniciada': assembleia_iniciada,
         'areas_lazer': areas_lazer,
+        'atas_existentes': atas_existentes,  # Adiciona a variável ao contexto
         'user_type': get_user_type(request.user)
+    })
+
+@login_required
+def atas_list(request):
+    try:
+        pessoa = Pessoa.objects.get(usuario=request.user)
+    except Pessoa.DoesNotExist:
+        return redirect('user_home')  # Redireciona se a pessoa não for encontrada
+
+    atas = Ata.objects.filter(
+        registro__assembleia__condominio=pessoa.condominio
+    ).distinct()
+
+    return render(request, 'atas/list.html', {
+        'atas': atas
     })
 
 @login_required
@@ -410,7 +445,8 @@ def areas_lazer_view(request):
             'reservado': area.fim > timezone.now(),  # Verifica se está reservado e ainda é válido     
             'fim': area.fim,
             'nome_pessoa': area.pessoa.nome if area.pessoa else None,  # Supondo que 'nome_completo' é o campo que armazena o nome completo da pessoa
-            'id': area.id
+            'id': area.id,
+            'bloqueado': area.bloqueado
         }
         for area in areas_lazer
     ]
@@ -487,6 +523,32 @@ def finalizar_reserva(request):
             messages.error(request, 'ID da área de lazer não fornecido.')
     
     return redirect('areas_lazer_list')
+
+@login_required
+def bloquear_area_lazer(request, area_id):
+    # Verifica se o usuário tem um objeto Pessoa associado e se é síndico
+    if not hasattr(request.user, 'pessoa') or not request.user.pessoa.sindico:
+        return redirect('user_home')  # Redireciona se o usuário não for síndico
+
+    area = get_object_or_404(AreaLazer, id=area_id)
+    area.bloqueado = True
+    area.save()
+
+    # Redireciona após o bloqueio
+    return redirect(request.META.get('HTTP_REFERER', 'user_home'))
+
+@login_required
+def desbloquear_area_lazer(request, area_id):
+    # Verifica se o usuário tem um objeto Pessoa associado e se é síndico
+    if not hasattr(request.user, 'pessoa') or not request.user.pessoa.sindico:
+        return redirect('user_home')  # Redireciona se o usuário não for síndico
+
+    area = get_object_or_404(AreaLazer, id=area_id)
+    area.bloqueado = False
+    area.save()
+
+    # Redireciona após o desbloqueio
+    return redirect(request.META.get('HTTP_REFERER', 'user_home'))
 
 @login_required
 def not_pessoa_home(request):
