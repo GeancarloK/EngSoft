@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Assembleias</title>
+    <link rel="stylesheet" href="{% static 'stylesheets/user.css' %}">
+    <style>
+        .assembleia-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .assembleia-item h3 {
+            margin-bottom: 10px;
+        }
+        .assembleia-item p {
+            margin-bottom: 15px;
+        }
+        .assembleia-item ul {
+            padding-left: 20px;
+        }
+        .assembleia-item form {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    {% include "header.html" %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Assembleias</h1>
+    
+        {% if assembleias %}
+            <div class="list-group">
+                {% for assembleia in assembleias %}
+                    <div class="list-group-item mb-4 p-3 border rounded
+                    {% if assembleia.status == 'criada' %} d-flex p-2 justify-content-between {% endif %}">
+                        <div>
+                            <h3 class="mb-2">{{ assembleia.titulo }} - <span class="badge bg-{% if assembleia.status == 'criada' %}success{% elif assembleia.status == 'finalizada' %}warning{% else %}primary{% endif %}">{{ assembleia.get_status_display }}</span></h3>
+                            <p class="mb-3">
+                                {% if assembleia.status == 'criada' %}
+                                    Criada: {{ assembleia.data_criacao }}
+                                {% else %}
+                                    Iniciada: {{ assembleia.data_inicio }}
+                                {% endif %}
+                                {% if assembleia.status == 'finalizada' %}
+                                     - Finalizada: {{ assembleia.data_finalizacao }}
+                                {% endif %}
+                            </p>
+                        </div>
+    
+                        {% if assembleia.status == 'criada' %}
+                            <form method="post" action="{% url 'iniciar_assembleia' assembleia.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-lg">Iniciar</button>
+                            </form>
+                        {% elif assembleia.status == 'iniciada' %}
+                            <div class="mt-4">
+                                <h4>Requisições:</h4>
+                                {% if assembleia.requisicoes.all %}
+                                    <ul class="list-group">
+                                        {% for requisicao in assembleia.requisicoes.all %}
+                                            <li class="list-group-item">
+                                                <strong>{{ requisicao.titulo }}</strong> - {{ requisicao.descricao }}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Nenhuma requisição registrada.</p>
+                                {% endif %}
+                            </div>
+    
+                            <div class="mt-4">
+                                <h4>Resultados Parciais:</h4>
+                                {% if assembleia.votos.all %}
+                                    <ul class="list-group">
+                                        {% for votacao in assembleia.votos.all %}
+                                            <li class="list-group-item">
+                                                <strong>{{ votacao.titulo }}</strong>
+                                                <ul class="list-group mt-2">
+                                                    {% with max_votes=0 max_opcao=None %}
+                                                        {% for opcao in votacao.opcoes_votacao.all %}
+                                                            {% if opcao.votos > max_votes %}
+                                                                {% with max_votes=opcao.votos max_opcao=opcao %}
+                                                                {% endwith %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                        {% for opcao in votacao.opcoes_votacao.all %}
+                                                            <li class="list-group-item {% if opcao == max_opcao %} bg-success text-white {% endif %}">
+                                                                {{ opcao.titulo }}: {{ opcao.votos }} votos
+                                                            </li>
+                                                        {% endfor %}
+                                                    {% endwith %}
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Não há resultados parciais disponíveis.</p>
+                                {% endif %}
+                            </div>
+    
+                            <div class="container mt-4">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <form method="get" action="{% url 'criar_votacao' assembleia.id %}">
+                                            <button type="submit" class="btn btn-primary w-100">Criar Nova Votação</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-6">
+                                        <form method="post" action="{% url 'finalizar_assembleia' assembleia.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger w-100">Finalizar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% elif assembleia.status == 'finalizada' %}
+                            <div class="mt-4">
+                                <h4>Adicionar Comentários para o Relatório:</h4>
+                                <form method="post" action="{% url 'entregar_assembleia' assembleia.id %}">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="resumo">Resumo da Assembleia:</label>
+                                        <textarea class="form-control" id="resumo" name="resumo" rows="5" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100 mt-3">
+                                        Salvar Comentários e Entregar Assembleia
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Não há assembleias acontecendo no momento.</p>
+        {% endif %}
+    
+        <!-- Botão para voltar para a home -->
+        <div class="mt-4">
+            <a href="{% url 'user_home' %}" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
+    {% include "footer.html" %}
+</body>
+</html>

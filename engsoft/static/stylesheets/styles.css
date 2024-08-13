@@ -2,19 +2,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-/* import another CSS files from folder*/
-@import "header-styles.css";
-@import "footer-styles.css";
-@import "login-styles.css";
+@import url("https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css");
 
 /* imported from https://color.adobe.com/trends/Ui/ux */
 :root {
-    /* Color Theme Swatches in Hex */
+    /* Color Theme Swatches in Hex 
     --SEF-white: #F0F0F2;
     --SEF-darkblue: #6F7BBF;
     --SEF-lightblue: #79A3D9;
     --SEF-dark: #0D0C0B;
-    --SEF-orange: #F29F80;
+    --SEF-orange: #F29F80;*/
+
+    --white: #F0F0F2;
+    --blue: #6F7BBF;
+    --darkgreen: #387780;
+    /*--green: #6AB547;*/
+    --green: #7A9E7E;
+    --yellow: #F6AE2D;
+    --red: #E83151;
+    --gray: #7c7e8c;
+    --black: #332E3C;
 }
 
 * {
@@ -25,7 +32,7 @@
 
 body {
     font-family: "Montserrat", sans-serif;
-    background-color: var(--SEF-white);
+    background-color: var(--white);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -33,38 +40,155 @@ body {
     height: 100vh;
 }
 
-/* Estilos para o título */
+.hidden {
+    display: none;
+}
+
+main {
+    flex: 1;
+}
+
+.bg-blue {
+    background-color: var(--blue);
+}
+
+/* Estilos para o título 
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
+}*/
+
+.header-login {
+    background-color: var(--blue);
+    padding: 1rem;
+    height: 90px;
+    width: 100vw;
 }
 
 /* Estilos para os botões */
-a {
+.btn {
     display: inline-block;
+    font-weight: 500;
     text-decoration: none;
-    background-color: var(--SEF-darkblue);
-    color: var(--SEF-white);
     padding: 10px 20px;
-    border: 1px solid var(--SEF-darkblue);
+    border-width: 1px;
+    border-style: solid;
     border-radius: 3px;
     margin-top: 10px;
     transition: background-color 0.3s, color 0.3s;
 }
 
-a:hover {
-    background-color: white;
-    color: var(--SEF-darkblue);
+.btn:hover {
+    font-weight: 700;
 }
 
-.secondary-button {
-    margin-top: 20px;
-    background-color: var(--SEF-white);
-    color: #555;
-    border-color: #ccc;
+.btn-primary {
+    background-color: var(--blue);
+    color: white;
+    border-color: var(--blue);
 }
 
-.secondary-button:hover {
+.btn-primary:hover {
     background-color: white;
-    border-color: var(--SEF-darkblue);
+    color: var(--blue);
+}
+
+.bg-primary {
+    background-color: var(--blue)!important;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: white;
+    color: var(--gray);
+    border-color: var(--gray);
+}
+
+.btn-secondary:hover {
+    background-color: white;
+    color: var(--blue);
+    border-color: var(--blue);
+}
+
+.bg-secondary {
+    background-color: var(--gray)!important;
+    color: white;
+}
+
+.btn-success {
+    background-color: var(--green);
+    color: white;
+    border-color: var(--green);
+}
+
+.btn-success:hover {
+    background-color: white;
+    color: var(--blue);
+    border-color: var(--blue);
+}
+
+.bg-success {
+    background-color: var(--green)!important;
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--red);
+    color: white;
+    border-color: var(--red);
+}
+
+.btn-danger:hover {
+    background-color: white;
+    color: var(--red);
+    border-color: var(--red);
+}
+
+.bg-danger {
+    background-color: var(--red)!important;
+    color: white;
+}
+
+.btn-warning {
+    background-color: var(--yellow);
+    color: white;
+    border-color: var(--yellow);
+}
+
+.btn-warning:hover {
+    background-color: white;
+    color: var(--yellow);
+    border-color: var(--yellow);
+}
+
+.bg-yellow {
+    background-color: var(--yellow)!important;
+}
+
+.btn-light {
+    background-color: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+.btn-light:hover {
+    background-color: white;
+    color: var(--blue);
+    border-color: var(--blue);
+}
+
+.btn-dark {
+    background-color: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+}
+
+.btn-dark:hover {
+    background-color: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+.pd-ico {
+    padding: 0 1rem;
 }

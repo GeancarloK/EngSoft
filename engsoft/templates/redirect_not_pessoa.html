@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro Completo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var message = "{{ message }}";
+            if (message) {
+                alert(message);
+            }
+            setTimeout(function() {
+                window.location.href = "{% url redirect_url %}"; // Redireciona para a URL apropriada
+            }, 500); // Redireciona após 0.5 segundos
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

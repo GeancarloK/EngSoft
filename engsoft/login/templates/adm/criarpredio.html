@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Criar Condomínio</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Criar Condomínio</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="nome_predio">Nome do Condomínio</label>
+                <input type="text" class="form-control" id="nome_predio" name="nome_predio" required>
+            </div>
+            <div class="form-group">
+                <label for="endereco_predio">Endereço</label>
+                <input type="text" class="form-control" id="endereco_predio" name="endereco_predio" required>
+            </div>
+            <div class="form-group">
+                <label for="nro_blocos">Número de Blocos</label>
+                <input type="number" class="form-control" id="nro_blocos" name="nro_blocos" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="nro_andares">Número de Andares</label>
+                <input type="number" class="form-control" id="nro_andares" name="nro_andares" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="nro_apt">Número de Apartamentos por Andar</label>
+                <input type="number" class="form-control" id="nro_apt" name="nro_apt" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Criar</button>
+            <a href="{% url 'adm_home' %}" class="btn btn-primary">Voltar</a>
+        </form>
+        {% if nome_predio %}
+            <div class="alert alert-success" role="alert">
+                Condomínio {{ nome_predio }} criado com sucesso!
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

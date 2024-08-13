@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CondFácil</title>
+    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
+</head>
+<body>
+    <div class="header-login"></div>
+    <div class="frontpage">
+        <div class="logo">
+            <img src="{% static 'images/Logo1.png' %}" alt="Logo da ConstruFácil" class="img-fluid mt-4">
+            <h4>Sua casa na palma da mão</h4>
+        </div>
+        <div class="login-container">
+            <h4>Seja bem-vindo(a) ao nosso site!</h4>
+            <a href="{% url 'login' %}" class="btn btn-primary">Fazer login</a>
+            <a href="{% url 'cadastro' %}" class="btn btn-secondary">Cadastre-se</a>
+        </div>
+    </div>
+    {% include "footer.html" %}
+</body>
+</html>

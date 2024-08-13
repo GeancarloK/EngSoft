@@ -5,20 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CondFácil</title>
-    <link rel="stylesheet" href="{% static 'stylesheets/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
 </head>
 <body>
     <!--{% include "header.html" %}-->
     <div class="header-login"></div>
     <div class="frontpage">
         <div class="logo">
-            <h1>CondFácil</h1>
+            <img src="{% static 'images/Logo1.png' %}" alt="Logo da ConstruFácil" class="img-fluid mt-4">
             <p>Sua casa na palma da mão</p>
         </div>
         <div class="login-container">
-            <h1>Seja bem-vindo(a) ao nosso site!</h1>
-            <a href="{% url 'login' %}" class="login-button">Fazer login</a>
-            <a href="#" class="cadastro-button secondary-button">Cadastre-se</a>
+            <h4>Seja bem-vindo(a) ao nosso site!</h4>
+            <a href="{% url 'login' %}" class="btn btn-primary">Fazer login</a>
+            <a href="{% url 'cadastro' %}" class="btn btn-secondary">Cadastre-se</a>
         </div>
     </div>
     {% include "footer.html" %}

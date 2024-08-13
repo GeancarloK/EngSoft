@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalhes do Condomínio</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ condominio.nome }}</h1>
+        <p>Endereço: {{ condominio.endereco }}</p>
+        
+        <!-- Se o condomínio tiver piscinas, academias ou áreas de lazer, mostre essas informações -->
+        {% if condominio.nro_pisc > 0 or condominio.nro_acad > 0 or condominio.nro_lazer > 0 %}
+            <h2>Áreas de Lazer</h2>
+            <ul>
+                {% if condominio.nro_pisc > 0 %}
+                    <li>Piscinas: {{ condominio.nro_pisc }}</li>
+                {% endif %}
+                {% if condominio.nro_acad > 0 %}
+                    <li>Academias: {{ condominio.nro_acad }}</li>
+                {% endif %}
+                {% if condominio.nro_lazer > 0 %}
+                    <li>Áreas de Lazer: {{ condominio.nro_lazer }}</li>
+                {% endif %}
+            </ul>
+        {% endif %}
+        
+        <h2>Moradores</h2>
+        <form method="post">
+            {% csrf_token %}
+            <ul>
+                {% for morador in moradores %}
+                <li>
+                    <a href="{% url 'adm_detalhes_morador' morador.id %}">
+                        {% if morador.bloco %}
+                            {{ morador.andar}}{{ morador.apt|stringformat:"02d" }}-{{ morador.bloco }}
+                        {% else %}
+                            {{ morador.andar}}{{ morador.apt|stringformat:"02d" }}
+                        {% endif %}
+                        - {{ morador.nome }}
+                    </a>
+                    <input type="radio" name="sindico_id" value="{{ morador.id }}" {% if morador.sindico %}checked{% endif %}> Síndico
+                </li>
+                {% empty %}
+                <li>Não há moradores neste condomínio.</li>
+                {% endfor %}
+            </ul>
+
+            <!-- Mostrar o botão apenas se houver pelo menos um morador -->
+            {% if moradores %}
+                <button type="submit" class="btn btn-primary">Salvar Síndico</button>
+            {% endif %}
+        </form>
+        
+        <a href="{% url 'adm_meus_condominios' %}" class="btn btn-primary">Voltar</a>
+    </div>
+</body>
+</html>

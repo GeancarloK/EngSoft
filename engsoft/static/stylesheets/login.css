@@ -1,3 +1,6 @@
+/* import main CSS file*/
+@import "styles.css";
+
 a.alert {
     background-color: var(--SEF-orange);
     border-color: var(--SEF-orange);
@@ -6,12 +9,6 @@ a.alert {
 
 a.alert:hover {
     color: var(--SEF-orange);
-}
-
-.header-login {
-    background-color: var(--SEF-darkblue);
-    height: 90px;
-    width: 100vw;
 }
 
 .frontpage {
@@ -56,6 +53,20 @@ a.alert:hover {
     padding: 0 50px;
 }
 
+.logo img {
+    width: 80%;
+    max-width:720px;
+}
+
+.logo-top {
+    margin-bottom: 5rem;
+    max-width: 250px;
+}
+
+.logo-top img {
+    width: 100%;
+}
+
 /* Media query para telas pequenas (celulares) */
 @media screen and (max-width: 900px) {
     .frontpage {
@@ -75,5 +86,16 @@ a.alert:hover {
 @media screen and (max-width: 1290px) {
     .logo h1 {
         font-size: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-group {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .form-group .col-md-6 {
+        width: 100%;
+        margin-bottom: 1rem;
     }
 }

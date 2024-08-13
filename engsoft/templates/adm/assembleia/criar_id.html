@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Criar Assembleia</title>
+    <link rel="stylesheet" href="{% static 'stylesheets/login.css' %}">
+</head>
+
+<body>
+    {% include "header.html" %}
+    <div class="container mt-4">
+        <h1>Criar Assembleia</h1>
+        <h5>Condomínio: <strong>{{ condominio.nome }}</strong></h5>
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Campo oculto para o condomínio -->
+            <input type="hidden" name="condominio" value="{{ condominio.id }}">
+
+            <div class="form-group">
+                <label for="titulo">Título da assembléia:</label>
+                <input type="text" class="form-control" id="titulo" name="titulo" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary mb-4">Criar Assembleia</button>
+            <a href="{% url 'home_assembleias_condominio' condominio.id %}" class="btn btn-secondary mb-4">Voltar</a>
+        </form>
+    </div>
+    {% include "footer.html" %}
+</body>
+
+</html>

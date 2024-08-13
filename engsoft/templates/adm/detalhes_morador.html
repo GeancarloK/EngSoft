@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalhes do Morador</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ morador.nome }}</h1>
+        <p>Email: {{ morador.email }}</p>
+        <p>CPF: {{ morador.cpf}}</p>
+        <p>Síndico: {{ morador.sindico|yesno:"Sim,Não" }}</p>
+        <p>Imóvel: {{ morador.andar }}{{ morador.apt |stringformat:"02d"}}-{{ morador.bloco }}</p>
+        
+        
+        <a href="{% url 'adm_detalhes_condominio' morador.condominio.id %}" class="btn btn-secondary">Voltar</a>
+    </div>
+</body>
+</html>

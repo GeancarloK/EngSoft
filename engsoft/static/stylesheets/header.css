@@ -1,0 +1,108 @@
+/* import main CSS file*/
+@import "styles.css";
+
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: var(--blue);
+    height: 90px;
+    width: 100vw;
+    position: relative;
+    color: white;
+}
+
+.nav-bar a.home-btn {
+    max-width: 250px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px;
+}
+
+.nav-bar a.home-btn img {
+    max-width: 100%; 
+    max-height: 100%; 
+    height: auto; 
+}
+
+.nav-bar .identificacao {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-bar .identificacao h4 {
+    font-size: 1.25rem;
+}
+
+.nav-bar .identificacao p {
+    margin: 0;
+}
+
+.menu-toggle {
+    display: none; /* Hidden by default */
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    padding: 1rem;
+}
+
+.opcoes-container {
+    display: flex;
+}
+
+.opcoes {
+    display: flex;
+    flex-direction: row;
+}
+
+.opcoes a {
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+}
+
+.opcoes a:hover {
+    background-color: var(--white); 
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 2rem;
+}
+
+
+@media (max-width: 768px) {
+    .nav-bar a.home-btn img {
+        max-width: 80%;
+        max-height: 80%;
+    }
+
+    .menu-toggle {
+        display: block; /* Show menu toggle on small screens */
+    }
+
+    .opcoes-container {
+        display: none; /* Hide menu by default */
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 90px; /* Adjust as needed */
+        background-color: var(--blue);
+    }
+
+    .opcoes-container.active {
+        display: flex; /* Show menu when active */
+    }
+
+    .opcoes a {
+        display: block; /* Stack menu items vertically */
+        padding: 15px;
+    }
+}
+
+@media (max-width: 500px) {
+    .nav-bar .identificacao {
+        display: none;
+    }
+}

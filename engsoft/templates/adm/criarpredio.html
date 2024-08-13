@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Criar Condomínio</title>
+    <link rel="stylesheet" href="{% static 'stylesheets/adm.css' %}">
+</head>
+<body>
+    {% include "header.html" %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Criar Condomínio</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="nome_predio">Nome do Condomínio</label>
+                <input type="text" class="form-control" id="nome_predio" name="nome_predio" required>
+            </div>
+            <div class="form-group">
+                <label for="endereco_predio">Endereço</label>
+                <input type="text" class="form-control" id="endereco_predio" name="endereco_predio" required>
+            </div>
+            <div class="form-section row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_andares">Número de Andares</label>
+                        <input type="number" class="form-control" id="nro_andares" name="nro_andares" min="1" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_blocos">Número de Blocos</label>
+                        <input type="number" class="form-control" id="nro_blocos" name="nro_blocos" min="1" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_apt">Número de Apartamentos por Andar</label>
+                        <input type="number" class="form-control" id="nro_apt" name="nro_apt" min="1" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_lazer">Número de Áreas de Lazer</label>
+                        <input type="number" class="form-control" id="nro_lazer" name="nro_lazer" min="0" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="has_acad" name="has_acad">
+                    <label class="form-check-label" for="has_acad">Academia</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="has_pisc" name="has_pisc">
+                    <label class="form-check-label" for="has_pisc">Piscina</label>
+                </div>
+            </div>
+            <div class="form-section row">
+                <div class="col-md-6">
+                    <a href="{% url 'adm_home' %}" class="btn btn-secondary btn-block">Voltar</a>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-block">Criar</button>
+                </div>
+            </div>
+        </form>
+        {% if nome_predio %}
+            <div class="alert alert-success mt-3" role="alert">
+                Condomínio {{ nome_predio }} criado com sucesso!
+            </div>
+        {% endif %}
+    </div>
+    {% include "footer.html" %}
+</body>
+</html>
+
