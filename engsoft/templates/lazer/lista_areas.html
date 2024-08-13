@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Áreas de Lazer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .form-inline {
+            display: flex;
+            align-items: center;
+        }
+        .form-inline input[type="number"] {
+            width: 80px; /* Ajuste a largura conforme necessário */
+            margin-right: 10px; /* Espaço entre o campo de entrada e o botão */
+        }
+        .form-inline .btn {
+            margin-left: 0; /* Remove qualquer margem à esquerda do botão */
+        }
+        .invalid-feedback {
+            display: block; /* Exibe a mensagem de erro quando o campo está inválido */
+        }
+        .text-success {
+            color: var(--green); /* Ajusta a cor do texto para verde */
+        }
+        .text-danger {
+            color: var(--red); /* Ajusta a cor do texto para vermelho */
+        }
+        .float-right {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    {% include "header.html" %}
+    <div class="container my-5">
+        <h1 class="mb-4">Áreas de Lazer no Condomínio</h1>
+        <ul class="list-group">
+            {% for area_info in areas_lazer_status %}
+                <li class="list-group-item">
+                    <div class="">
+                        <h4>Área de Lazer {{ area_info.num }}</h4>
+                        {% if area_info.reservado %}
+                            {% if is_sindico %}
+                                {% if area_info.nome_pessoa %}
+                                    <p class="mb-1">Reservado por: {{ area_info.nome_pessoa }}</p>
+                                {% endif %}
+                            {% endif %}
+                            {% if area_info.nome_pessoa == request.user.pessoa.nome %}
+                                <!-- Mostrar botão para finalizar reserva se o usuário atual for o reservador -->
+                                <form action="{% url 'finalizar_reserva' %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="area_id" value="{{ area_info.id }}">
+                                    <button type="submit" class="btn btn-warning btn-sm">Finalizar Reserva</button>
+                                    <p class="text-success mb-0 ms-2">Reservado por você!</p>
+                                </form>
+                            {% else %}
+                                <!-- Mostrar botão de reservado se o usuário não for o reservador -->
+                                <h4><span class="badge bg-secondary">Reservado</span></h4>
+                            {% endif %}
+                            <p class="text-danger mb-0">Data e Hora de Término: {{ area_info.fim|date:"d/m/Y H:i" }}</p>
+                        {% else %}
+                            <!-- Mostrar apenas se a área não estiver bloqueada -->
+                            {% if area_info.bloqueado %}
+                                <h4><span class="badge bg-danger">Bloqueada</span></h4>
+                                {% if is_sindico %}
+                                    <!-- Adiciona botão para desbloquear área -->
+                                    <form action="{% url 'desbloquear_area_lazer' area_info.id %}" method="post" class="d-inline ms-2">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm">Desbloquear</button>
+                                    </form>
+                                {% endif %}
+                            {% else %}
+                                <h4><span class="badge bg-success">Livre</span></h4>
+                                <form action="{% url 'reservar_area_lazer' %}" method="post" class="d-inline ms-2">
+                                    {% csrf_token %}
+                                    <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between">
+                                        <div class="d-flex flex-row">
+                                            <label for="numero_{{ area_info.num }}" class="me-2 mb-1 mb-sm-0">Tempo de reserva:&nbsp;&nbsp;&nbsp;</label>
+                                            <p></p>
+                                            <input type="hidden" name="area_num" value="{{ area_info.num }}">
+                                            <p></p>
+                                            <input type="number" id="numero_{{ area_info.num }}" name="numero" min="1" max="12" class="form-control form-control-sm w-auto mb-2 mb-sm-0" required>
+                                            <span>&nbsp;&nbsp;&nbsp;horas</span>
+                                        </div>
+                                        <div class="d-block">
+                                            <button type="submit" class="btn btn-primary btn-sm">Reservar</button>
+                                            {% if is_sindico %}
+                                                <a href="{% url 'bloquear_area_lazer' area_info.id %}" class="btn btn-danger btn-sm ms-2">Bloquear</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        O número deve estar entre 1 e 12.
+                                    </div>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </li>
+            {% empty %}
+                <li class="list-group-item">Nenhuma área de lazer encontrada.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="container mt-4">
+        <a href="{% url 'user_home' %}" class="btn btn-secondary">Voltar</a>
+    </div>
+    <div>
+        <p></p>
+    </div>
+    {% include "footer.html" %}
+</body>
+</html>

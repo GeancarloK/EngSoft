@@ -1,22 +1,59 @@
 {% load static %}
+{% load custom_tags %}
+{% get_user_type request.user as user_type %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'stylesheets/header.css' %}">
 </head>
 <body>
-    <div class="navbar">
-        <a href="#">Home</a>
-        <a href="#">Solicitações</a>
-        <a href="#">Assembléia</a>
-        {% if is_sindico %}
-            <a href="#">Caixa</a>
-            <a href="#">Imóveis</a> <!--estas duas são admin mas essa classe não foi implementada ainda (?)-->
-            <a href="#">Administração</a>
+    <div class="nav-bar">
+        {% if user_type %}
+            {% if construtora_nome or pessoa.nome or not_pessoa.nome %}
+                <div class="identificacao">
+                    {% if user_type == 'construtora' %}
+                        <h4>{{ construtora_nome }}</h4>
+                        <p>{{ construtora.endereco }}</p>
+                    {% elif user_type == 'pessoa' %}
+                        <h4>{{ pessoa.nome }}{% if pessoa.sindico %} <i>(Síndico)</i>{% endif %}</h4>
+                        <p>{{ pessoa.condominio }}</p>
+                    {% elif user_type == 'not_pessoa' %}
+                        <h4>{{ not_pessoa.nome }}</h4>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
-        <a href="#">Contato</a>
+        <a href="{% url 'user_home_redirect' %}" class="home-btn">
+            <img src="{% static 'images/Logo1_white.png' %}" alt="CondFácil">
+        </a>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            &#9776; <!-- Hamburger icon -->
+        </div>
+        <div class="opcoes-container">
+            <div class="opcoes">
+                {% if user_type == 'construtora' %}
+                    <a href="{% url 'adm_criar_predio' %}">Criar prédio</a>
+                    <a href="{% url 'adm_lista_moradores' %}">Gerenciar imóveis</a>
+                    <a href="{% url 'home_assembleias' %}">Assembleias</a>
+                    <a href="{% url 'adm_pendentes' %}">Pendentes</a>
+                {% elif user_type == 'pessoa' %}
+                    <a href="{% url 'editar_perfil' %}">Editar perfil</a>
+                    {% if pessoa.sindico %} <!--Sindico-->
+                        <a href="{% url 'sindico_assembleias' %}">Gerenciar Assembleias</a>
+                    {% else %} <!--Morador comum-->
+                        <a href="{% url 'user_assembleias' %}">Assembleias</a>
+                    {% endif %} <!--Tanto síndico quanto morador-->
+                    <a href="{% url 'atas_list' %}">Atas de Reuniões</a>
+                    <a href="{% url 'areas_lazer_list' %}">Áreas de Lazer</a>
+                {% elif user_type == 'not_pessoa' %}
+                    <!--Permanece em branco-->
+                {% endif %}
+                    <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
     </div>
+    <script src="{% static 'scripts/main.js' %}"></script>
 </body>
 </html>

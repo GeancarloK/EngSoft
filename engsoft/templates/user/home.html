@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+</head>
+<body>
+    {% include "header.html" %}
+    <div class="container my-5">
+        <div class="text-center mb-4">
+            <h1>Bem-vindo, {{ pessoa.nome }}!</h1>
+            <h5><strong>{{ pessoa.condominio }}</strong>, Imóvel {{ pessoa.andar }}{{ pessoa.apt | stringformat:"02d" }}-{{ pessoa.bloco }}</h5>
+        </div>
+    
+        <!-- Sistema de Grid para Tiles com Ajuste de Largura e Margem -->
+        <div class="row g-4">
+            <!-- Editar Perfil -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card text-center border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-person-circle"></i> Editar Perfil</h5>
+                        <p class="card-text">Atualize suas informações pessoais.</p>
+                        <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar</a>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Gerenciar Assembleias -->
+            {% if pessoa.sindico %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-clipboard-check"></i> Gerenciar Assembleias</h5>
+                            <p class="card-text">Acesse e gerencie as assembleias do condomínio.</p>
+                            {% if assembleia_criada or assembleia_iniciada or assembleia_finalizada %}
+                                <a href="{% url 'sindico_assembleias' %}" class="btn btn-primary">Gerenciar</a>
+                            {% else %}
+                                <a href="{% url 'sindico_assembleias' %}" class="btn btn-secondary">Gerenciar</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Assembleias para não síndico -->
+                {% if assembleia_iniciada %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card text-center border-primary">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-calendar-check"></i> Assembleias</h5>
+                                <p class="card-text">Confira e participe das assembleias em andamento.</p>
+                                <a href="{% url 'user_assembleias' %}" class="btn btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card text-center border-primary">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-calendar"></i> Assembleias</h5>
+                                <p class="card-text">Acesse as assembleias do condomínio.</p>
+                                <a href="{% url 'user_assembleias' %}" class="btn btn-secondary">Ver</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+    
+            <!-- Áreas de Lazer -->
+            {% if areas_lazer %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-house-door"></i> Áreas de Lazer</h5>
+                            <p class="card-text">Visualize e reserve as áreas de lazer do condomínio.</p>
+                            <a href="{% url 'areas_lazer_list' %}" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-house-door"></i> Áreas de Lazer</h5>
+                            <p class="card-text">Confira as áreas de lazer disponíveis.</p>
+                            <a href="{% url 'areas_lazer_list' %}" class="btn btn-secondary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+    
+            <!-- Atas -->
+            {% if atas_existentes %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Atas de Reuniões</h5>
+                            <p class="card-text">Acesse e consulte as atas das assembleias.</p>
+                            <a href="{% url 'atas_list' %}" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Atas de Reuniões</h5>
+                            <p class="card-text">Consulte as atas disponíveis.</p>
+                            <a href="{% url 'atas_list' %}" class="btn btn-secondary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+    
+            <!-- Logout -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card text-center border-danger">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-box-arrow-right"></i> Logout</h5>
+                        <p class="card-text">Saia da sua conta.</p>
+                        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include "footer.html" %}
+</body>
+</html>
