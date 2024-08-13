@@ -7,28 +7,80 @@
 </head>
 <body>
     {% include "header.html" %}
-    <div class="container">
-        <h1>Bem-vindo, {{ construtora_nome }}!</h1>
-    </div>
-    <!--<div class="container">
-        <a href="{% url 'adm_meus_condominios' %}" class="btn btn-primary">Meus condomínios</a>
-    </div>-->
-    <div class="container">
-        <a href="{% url 'adm_lista_moradores' %}" class="btn btn-primary">Gerenciar imóveis</a>
-    </div>
-    <div class="container">
-        <a href="{% url 'adm_criar_predio' %}" class="btn btn-primary">Criar prédio</a>
-    </div>
-    <div class="container">
-        <a href="{% url 'home_assembleias' %}" class="btn btn-primary">Assembleias</a>
-    </div>
-    {% if pendencias_existentes %}
-    <div class="container">
-        <a href="{% url 'adm_pendentes' %}" class="btn btn-primary">Pendentes</a>
-    </div>
-    {% endif %}
-    <div class="container">
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    <div class="container my-5">
+        <div class="text-center mb-4">
+            <h1>Bem-vindo, {{ construtora_nome }}!</h1>
+        </div>
+    
+        <!-- Sistema de Grid para Tiles com Ajuste de Largura e Margem -->
+        <div class="row g-4">
+            <!-- Gerenciar Imóveis -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card text-center border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-house-door"></i> Gerenciar Imóveis</h5>
+                        <p class="card-text">Administre os imóveis dos condomínios sob sua gestão.</p>
+                        <a href="{% url 'adm_lista_moradores' %}" class="btn btn-primary">Gerenciar</a>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Criar Prédio -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card text-center border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-building"></i> Criar Prédio</h5>
+                        <p class="card-text">Adicione novos prédios à sua lista de propriedades.</p>
+                        <a href="{% url 'adm_criar_predio' %}" class="btn btn-primary">Criar</a>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Assembleias -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card text-center border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-calendar-check"></i> Assembleias</h5>
+                        <p class="card-text">Gerencie as assembleias dos condomínios.</p>
+                        <a href="{% url 'home_assembleias' %}" class="btn btn-primary">Ver</a>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Pendentes -->
+            {% if pendencias_existentes %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Pendentes</h5>
+                            <p class="card-text">Confira as pendências atuais.</p>
+                            <a href="{% url 'adm_pendentes' %}" class="btn btn-primary">Ver Pendentes</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center border-secondary">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Pendentes</h5>
+                            <p class="card-text">Não há pendências no momento.</p>
+                            <a href="{% url 'adm_pendentes' %}" class="btn btn-secondary">Ver Pendentes</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+    
+            <!-- Logout -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card text-center border-danger">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-box-arrow-right"></i> Logout</h5>
+                        <p class="card-text">Saia da sua conta.</p>
+                        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     {% include "footer.html" %}
 </body>

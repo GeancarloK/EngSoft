@@ -13,12 +13,8 @@ from django.urls import reverse
 from urllib.parse import urlencode
 from django.utils import timezone
 from datetime import timedelta
-from . import views
 from .forms import PessoaForm, SignUpForm, ProfileUpdateForm, AdmMoradorForm
 from assembleia.models import Assembleia, Ata, Registro
-
-
-#import json
 
 User = get_user_model()
 
@@ -92,12 +88,13 @@ def editar_perfil(request):
         form = ProfileUpdateForm(initial={
             'name': user_model.nome,
             'email': user_model.email,
-            'cpf': user_model.cpf
+            'cpf': format_cpf(user_model.cpf)
         })
 
     return render(request, 'editar_perfil.html', {
         'form': form,
-        'user_type': get_user_type(request.user)
+        'user_type': get_user_type(request.user),
+        'pessoa': user_model  # Adicionando a variável pessoa ao contexto
     })
 
 def user_home_redirect(request):
@@ -112,6 +109,22 @@ def user_home_redirect(request):
         return redirect('logoff')
 
     return render(request, 'user_home_redirect.html', {
+        'message': message,
+        'redirect_url': redirect_url
+    })
+
+def redirect_not_pessoa(request):
+    message = request.GET.get('message', '')
+
+    if message == 'Usuário criado com sucesso':
+        redirect_url = 'login'
+    else:
+        redirect_url = choose_home(request.user) 
+
+    if redirect_url == 'logoff':
+        return redirect('logoff')
+
+    return render(request, 'redirect_not_pessoa.html', {
         'message': message,
         'redirect_url': redirect_url
     })
@@ -314,7 +327,7 @@ def adm_editar_morador(request, usuario_id):
             messages.success(request, 'Informações alteradas com sucesso!')
     else:
         form = AdmMoradorForm(instance=pessoa)
-    
+    pessoa.cpf = format_cpf(pessoa.cpf)
     return render(request, 'adm/editar_morador.html', {
         'form': form,
         'pessoa': pessoa,
@@ -352,6 +365,7 @@ def transformar_para_notpessoa(request, pessoa_id):
 
 
 
+
 ### MORADOR
 def login(request):
     if request.method == 'POST':
@@ -378,26 +392,41 @@ def choose_home(user):
         return 'not_pessoa_home'
     
     return 'logoff'
+
+
 @login_required
 def user_home(request):
     try:
         pessoa = Pessoa.objects.get(usuario=request.user)
     except Pessoa.DoesNotExist:
-        pessoa = None
-
+        return redirect('not_pessoa_home')
     if pessoa:
-        # Verifica se há assembleia iniciada no condomínio do morador
-        assembleia_iniciada = Assembleia.objects.filter(
-            condominio=pessoa.condominio, status='iniciada'
+        assembleia_criada = Assembleia.objects.filter(
+            condominio=pessoa.condominio, status='criada'
         ).first()  # Pega o primeiro objeto ou None
 
+        assembleia_iniciada = Assembleia.objects.filter(
+            condominio=pessoa.condominio, status='iniciada'
+        ).first()
+
+        assembleia_finalizada = Assembleia.objects.filter(
+            condominio=pessoa.condominio, status='finalizada'
+        ).first()
+        
         # Verifica se há áreas de lazer associadas ao condomínio
         areas_lazer = AreaLazer.objects.filter(condominio=pessoa.condominio).exists()
 
-        # Verifica se há atas associadas ao condomínio
-        atas_existentes = Ata.objects.filter(
-            registro__assembleia__condominio=pessoa.condominio
-        ).exists()
+        assembleia_entregue = Assembleia.objects.filter(
+            condominio=pessoa.condominio, status='entregue'
+        )
+
+        # Verifica se há atas associadas ao condomínio através dos registros
+        if assembleia_entregue is not None:
+            registros = Registro.objects.filter(assembleia__in=assembleia_entregue)
+            atas_existentes = Ata.objects.filter(id__in=registros.values_list('ata_id', flat=True)).exists()
+        else:
+            atas_existentes = False
+        
     else:
         assembleia_iniciada = None
         areas_lazer = False
@@ -405,11 +434,35 @@ def user_home(request):
 
     return render(request, 'user/home.html', {
         'pessoa': pessoa,
+        'assembleia_criada': assembleia_criada,
+        'assembleia_finalizada': assembleia_finalizada,
         'assembleia_iniciada': assembleia_iniciada,
         'areas_lazer': areas_lazer,
-        'atas_existentes': atas_existentes,  # Adiciona a variável ao contexto
+        'atas_existentes': atas_existentes,
         'user_type': get_user_type(request.user)
     })
+
+@login_required
+def excluir_morador(request, pessoa_id):
+    if request.method == 'POST':
+        pessoa = get_object_or_404(Pessoa, id=pessoa_id)
+        
+        # Criar o NotPessoa com os dados do Pessoa
+        not_pessoa = NotPessoa(
+            nome=pessoa.nome,
+            email=pessoa.email,
+            usuario=pessoa.usuario,
+            cpf=pessoa.cpf,
+        )
+        not_pessoa.save()
+        
+        # Deletar o objeto Pessoa
+        pessoa.delete()
+        
+        # Redirecionar para a lista de moradores ou onde for apropriado
+        return redirect('not_pessoa_home')
+    else:
+        return redirect('not_pessoa_home')
 
 @login_required
 def atas_list(request):
@@ -418,12 +471,22 @@ def atas_list(request):
     except Pessoa.DoesNotExist:
         return redirect('user_home')  # Redireciona se a pessoa não for encontrada
 
-    atas = Ata.objects.filter(
-        registro__assembleia__condominio=pessoa.condominio
-    ).distinct()
+    assembleia_entregue = Assembleia.objects.filter(condominio=pessoa.condominio, status='entregue')
+    
+    # Captura o termo de pesquisa da query string
+    termo_pesquisa = request.GET.get('search', '')
 
-    return render(request, 'atas/list.html', {
-        'atas': atas
+    # Filtra os registros com base no termo de pesquisa
+    registros = Registro.objects.filter(
+        assembleia__in=assembleia_entregue,
+        ata__isnull=False
+    ).filter(
+        assembleia__titulo__icontains=termo_pesquisa  # Filtra pelo título da assembleia
+    ).order_by('-assembleia__data_inicio')
+
+    return render(request, 'user/assembleia/atas.html', {
+        'registros': registros,
+        'termo_pesquisa': termo_pesquisa  # Passa o termo de pesquisa para o template
     })
 
 @login_required
@@ -552,7 +615,10 @@ def desbloquear_area_lazer(request, area_id):
 
 @login_required
 def not_pessoa_home(request):
-    not_pessoa = get_object_or_404(NotPessoa, usuario=request.user)
+    try:
+        not_pessoa = NotPessoa.objects.get(usuario=request.user)
+    except NotPessoa.DoesNotExist:
+        return redirect('user_home_redirect')
     condominios = Condominio.objects.all()
 
     if request.method == 'POST':
@@ -665,7 +731,7 @@ def adm_gerenciar_morador(request, pk):
             not_pessoa.save()
             messages.info(request, f'A requisição de {not_pessoa.nome} foi negada.')
             return redirect('adm_pendentes')
-    
+    not_pessoa.cpf = format_cpf(not_pessoa.cpf)
     return render(request, 'adm/gerenciar_conta.html', {
         'not_pessoa': not_pessoa,
         'user_type': get_user_type(request.user)
@@ -686,7 +752,16 @@ def excluir_requisicao(request, not_pessoa_id):
     return redirect('not_pessoa_home')  # ou qualquer URL apropriada
 
 
-
+def format_cpf(value):
+    """
+    Formata um CPF no formato 123.456.789-01.
+    """
+    if not value:
+        return value
+    value = str(value)
+    if len(value) == 11:
+        return f"{value[:3]}.{value[3:6]}.{value[6:9]}-{value[9:]}"
+    return value
 
 
 ### RESERVA

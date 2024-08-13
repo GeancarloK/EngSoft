@@ -7,8 +7,8 @@
 </head>
 <body>
     {% include "header.html" %}
-    <div class="container">
-        <h1>Criar Condomínio</h1>
+    <div class="container mt-4">
+        <h1 class="mb-4">Criar Condomínio</h1>
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
@@ -19,32 +19,52 @@
                 <label for="endereco_predio">Endereço</label>
                 <input type="text" class="form-control" id="endereco_predio" name="endereco_predio" required>
             </div>
-            <div class="form-group">
-                <label for="nro_blocos">Número de Blocos</label>
-                <input type="number" class="form-control" id="nro_blocos" name="nro_blocos" min="1" required>
+            <div class="form-section row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_andares">Número de Andares</label>
+                        <input type="number" class="form-control" id="nro_andares" name="nro_andares" min="1" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_blocos">Número de Blocos</label>
+                        <input type="number" class="form-control" id="nro_blocos" name="nro_blocos" min="1" required>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="nro_andares">Número de Andares</label>
-                <input type="number" class="form-control" id="nro_andares" name="nro_andares" min="1" required>
+            <div class="form-section row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_apt">Número de Apartamentos por Andar</label>
+                        <input type="number" class="form-control" id="nro_apt" name="nro_apt" min="1" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nro_lazer">Número de Áreas de Lazer</label>
+                        <input type="number" class="form-control" id="nro_lazer" name="nro_lazer" min="0" required>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="nro_apt">Número de Apartamentos por Andar</label>
-                <input type="number" class="form-control" id="nro_apt" name="nro_apt" min="1" required>
+            <div class="form-section">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="has_acad" name="has_acad">
+                    <label class="form-check-label" for="has_acad">Academia</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="has_pisc" name="has_pisc">
+                    <label class="form-check-label" for="has_pisc">Piscina</label>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="nro_lazer">Número de Áreas de Lazer</label>
-                <input type="number" class="form-control" id="nro_lazer" name="nro_lazer" min="0" required>
+            <div class="form-section row">
+                <div class="col-md-6">
+                    <a href="{% url 'adm_home' %}" class="btn btn-secondary btn-block">Voltar</a>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary btn-block">Criar</button>
+                </div>
             </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="has_acad" name="has_acad">
-                <label class="form-check-label" for="has_acad">Academia</label>
-            </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="has_pisc" name="has_pisc">
-                <label class="form-check-label" for="has_pisc">Piscina</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Criar</button>
-            <a href="{% url 'adm_home' %}" class="btn btn-secondary">Voltar</a>
         </form>
         {% if nome_predio %}
             <div class="alert alert-success mt-3" role="alert">

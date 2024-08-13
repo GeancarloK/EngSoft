@@ -4,6 +4,23 @@
 <head>
     <title>Lista de Moradores</title>
     <link rel="stylesheet" href="{% static 'stylesheets/adm.css' %}">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.3/font/bootstrap-icons.min.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.btn-toggle').forEach(button => {
+                button.addEventListener('click', function () {
+                    const target = document.getElementById(this.getAttribute('data-target'));
+                    const isExpanded = target.classList.contains('show');
+                    
+                    // Toggle button text
+                    this.textContent = isExpanded ? 'Mostrar Detalhes' : 'Ocultar Detalhes';
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     {% include "header.html" %}
@@ -19,60 +36,89 @@
 
         {% for condominio, dados in context.items %}
             <div class="card mb-4">
-                <div class="card-header">
-                    <h2 class="mb-0">{{ condominio }}</h2>
-                    
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">{{ condominio }}</h2>
+                        <p class="mb-0">Endereço: {{ condominio.endereco }}</p>
+                    </div>
                     <a href="{% url 'home_assembleias_condominio' condominio.id %}" class="btn btn-info btn-sm">Ver Assembleias</a>
-                    <div class="container mt-2">
-                        <p>Endereço: {{ condominio.endereco }}</p>
-                        
+                    <button class="btn btn-primary btn-sm btn-toggle" type="button" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                        Mostrar Detalhes
+                    </button>
+                </div>
+                <div id="collapse{{ forloop.counter }}" class="collapse">
+                    <div class="card-body">
                         {% if condominio.has_pisc or condominio.has_acad or condominio.nro_lazer > 0 %}
-                            <h4>Áreas de Lazer</h4>
-                            <ul>
-                                {% if condominio.nro_lazer > 0 %}
-                                    <li>Áreas de Lazer: {{ condominio.nro_lazer }}</li>
+                            <div class="container mt-4">
+                                <h4 class="mb-3">Áreas de Lazer</h4>
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        {% if condominio.nro_lazer > 0 %}
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-geo-alt me-2"></i> <!-- Ícone opcional -->
+                                                <span><strong>&nbsp;&nbsp;Áreas de Lazer: </strong> {{ condominio.nro_lazer }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        {% if condominio.has_pisc %}
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-water me-2"></i> <!-- Ícone opcional -->
+                                                <span>&nbsp;&nbsp;Piscina </span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        {% if condominio.has_acad %}
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-people me-2"></i> <!-- Ícone opcional -->
+                                                <span>&nbsp;&nbsp;Academia</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if condominio.nro_lazer == 0 and not condominio.has_pisc and not condominio.has_acad %}
+                                    <p class="text-muted">Nenhuma área de lazer disponível.</p>
                                 {% endif %}
-                                {% if condominio.has_pisc%}
-                                    <li>Piscina</li>
-                                {% endif %}
-                                {% if condominio.has_acad%}
-                                    <li>Academia</li>
-                                {% endif %}
-                            </ul>
+                            </div>
                         {% endif %}
+                        <h4>Moradores</h4>
+                        <ul class="list-group">
+                            {% for pessoa in dados.pessoas %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Nome:</strong> {{ pessoa.nome }} {% if pessoa.sindico %}(Síndico){% endif %}<br>
+                                        <strong>Bloco:</strong> {{ pessoa.bloco }}<br>
+                                        <strong>Andar:</strong> {{ pessoa.andar }}<br>
+                                        <strong>Apt:</strong> {{ pessoa.apt }}
+                                    </div>
+                                    <div>
+                                        {% if pessoa.id %}
+                                            <a href="{% url 'adm_editar_morador' pessoa.id %}" class="btn btn-primary btn-sm">Editar</a>
+                                        {% else %}
+                                            <span class="btn btn-secondary btn-sm" disabled>Editar</span>
+                                        {% endif %}
+                                        {% if pessoa.sindico %}
+                                            <!--button class="btn btn-white btn-sm" disabled>Já é Síndico</button-->
+                                        {% else %}
+                                            {% if dados.sindico_exists and dados.current_sindico_id == pessoa.id %}
+                                                <!--button class="btn btn-white btn-sm" disabled>Já é Síndico</button-->
+                                            {% else %}
+                                                <a href="{% url 'adm_tornar_sindico' pessoa.id %}" class="btn btn-secondary btn-sm">Tornar Síndico</a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
                     </div>
                 </div>
-                <ul class="list-group list-group-flush">
-                    {% for pessoa in dados.pessoas %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Nome:</strong> {{ pessoa.nome }} {% if pessoa.sindico %}(Síndico){% endif %}<br>
-                                <strong>Bloco:</strong> {{ pessoa.bloco }}<br>
-                                <strong>Andar:</strong> {{ pessoa.andar }}<br>
-                                <strong>Apt:</strong> {{ pessoa.apt }}
-                            </div>
-                            <div>
-                                {% if pessoa.id %}
-                                    <a href="{% url 'adm_editar_morador' pessoa.id %}" class="btn btn-primary btn-sm">Editar</a>
-                                {% else %}
-                                    <span class="btn btn-secondary btn-sm" disabled>Editar</span>
-                                {% endif %}
-                                {% if pessoa.sindico %}
-                                    <button class="btn btn-secondary btn-sm" disabled>Tornar Síndico</button>
-                                {% else %}
-                                    {% if dados.sindico_exists and dados.current_sindico_id == pessoa.id %}
-                                        <button class="btn btn-secondary btn-sm" disabled>Tornar Síndico</button>
-                                    {% else %}
-                                        <a href="{% url 'adm_tornar_sindico' pessoa.id %}" class="btn btn-secondary btn-sm">Tornar Síndico</a>
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
             </div>
         {% endfor %}
         <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary ml-2">Voltar</a>
+        <div>
+            <p></p>
+        </div>
     </div>
     {% include "footer.html" %}
 </body>

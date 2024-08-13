@@ -18,6 +18,7 @@ urlpatterns = [
     ##perfil do usuario
     path('editar_perfil/', li.editar_perfil, name='editar_perfil'),
     path('redirect/', li.user_home_redirect, name='user_home_redirect'),
+    path('redirect_not_pessoa/', li.redirect_not_pessoa, name='redirect_not_pessoa'),
 
     ##administradora
     path('adm/home/', li.adm_home, name='adm_home'),
@@ -45,6 +46,7 @@ urlpatterns = [
     path('user/reservar-area-lazer/', li.reservar_area_lazer, name='reservar_area_lazer'),
     path('user/finalizar-reserva/', li.finalizar_reserva, name='finalizar_reserva'),
     path('user/atas/', li.atas_list, name='atas_list'),
+    path('user/excluir/<int:pessoa_id>/', li.excluir_morador, name='excluir_morador'),
 
     ##sindico
     path('user/assembleia/sindico/', bl.sindico_assembleias, name='sindico_assembleias'),

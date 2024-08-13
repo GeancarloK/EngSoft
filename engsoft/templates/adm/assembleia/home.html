@@ -10,8 +10,9 @@
 <body>
     {% include "header.html" %}
     <div class="container mt-4">
-        <h1>Assembleias</h1>
-
+        <h1 class="mb-4">Assembleias</h1>
+    
+        <!-- Mensagens de Alerta -->
         {% if messages %}
             <div class="alert alert-info">
                 {% for message in messages %}
@@ -19,121 +20,125 @@
                 {% endfor %}
             </div>
         {% endif %}
-
+    
+        <!-- Botões de Navegação -->
         <div class="mb-4">
-            <a href="{% url 'adm_criar_assembleia' %}" class="btn btn-primary">Criar Nova Assembleia</a>
-            <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary ml-2">Voltar</a>
+            <a href="{% url 'adm_criar_assembleia' %}" class="btn btn-primary me-2">Criar Nova Assembleia</a>
+            <a href="{% url 'user_home_redirect' %}" class="btn btn-secondary">Voltar</a>
         </div>
-
+    
         <!-- Seção 'Esperando início por síndico' -->
-        <div class="mb-4">
-            
-            {% if criada_assembleias %}
-                <h2>Esperando início por síndico</h2>
+        {% if criada_assembleias %}
+            <h2 class="mb-3">Esperando início por síndico</h2>
+            <div class="row">
                 {% for assembleia in criada_assembleias %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
-                            <p class="card-text"><strong>Esperando início por síndico</strong></p>
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                                <p class="card-text"><strong>Esperando início por síndico</strong></p>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
-            {% endif %}
-        </div>
-
+            </div>
+        {% endif %}
+    
         <!-- Seção 'Em andamento' -->
-        <div class="mb-4">
-            
-            {% if iniciada_assembleias %}
-                <h2>Em andamento</h2>
+        {% if iniciada_assembleias %}
+            <h2 class="mb-3">Em andamento</h2>
+            <div class="row">
                 {% for assembleia in iniciada_assembleias %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
-                            <p class="card-text"><strong>Em andamento</strong></p>
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                                <p class="card-text"><strong>Em andamento</strong></p>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
-            {% endif %}
-        </div>
-
+            </div>
+        {% endif %}
+    
         <!-- Seção 'Finalizada' -->
-        <div class="mb-4">
-            
-            {% if finalizada_assembleias %}
-                <h2>Finalizada</h2>
+        {% if finalizada_assembleias %}
+            <h2 class="mb-3">Finalizada</h2>
+            <div class="row">
                 {% for assembleia in finalizada_assembleias %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
-                            <p class="card-text"><strong>Finalizada</strong></p>
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                                <p class="card-text"><strong>Finalizada</strong></p>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
-            {% endif %}
-        </div>
-
+            </div>
+        {% endif %}
+    
         <!-- Seção 'Entregue' -->
-        <div class="mb-4">
-            {% if entregue_assembleias %}
-                <h2>Entregue</h2>
+        {% if entregue_assembleias %}
+            <h2 class="mb-3">Entregue</h2>
+            <div class="row">
                 {% for assembleia in entregue_assembleias %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
-                            
-                            {% if assembleia.registros.exists %}
-                                {% for registro in assembleia.registros.all %}
-                                    <p class="card-text"><strong>Resumo:</strong><br>{{ registro.resumo }}</p>
-                                    <p class="card-text"><strong>Votações:</strong></p>
-                                    <ul>
-                                        {% for votacao in assembleia.votos.all %}
-                                            <li>
-                                                <strong>Votação: {{ votacao.titulo }}</strong>
-                                                <ul>
-                                                    {% with votacao.opcoes_votacao.all as opcoes %}
-                                                        {% with opcoes|dictsort:"votos" as sorted_opcoes %}
-                                                            {% with sorted_opcoes.last as maior_votos %}
-                                                                {% for opcao in sorted_opcoes %}
-                                                                    <li {% if opcao.votos == maior_votos.votos %}style="font-weight: bold"{% endif %}>
-                                                                        Opção: <strong>{{ opcao.titulo }}</strong> -> {{ opcao.votos }} votos
-                                                                    </li>
-                                                                {% endfor %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ assembleia.condominio.nome }} - {{ assembleia.titulo }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Criado em: {{ assembleia.data_criacao|date:"d/m/Y H:i" }}</h6>
+                                
+                                {% if assembleia.registros.exists %}
+                                    {% for registro in assembleia.registros.all %}
+                                        <p class="card-text"><strong>Resumo:</strong><br>{{ registro.resumo }}</p>
+                                        <p class="card-text"><strong>Votações:</strong></p>
+                                        <ul class="list-unstyled">
+                                            {% for votacao in assembleia.votos.all %}
+                                                <li>
+                                                    <strong>Votação: {{ votacao.titulo }}</strong>
+                                                    <ul class="list-unstyled">
+                                                        {% with votacao.opcoes_votacao.all as opcoes %}
+                                                            {% with opcoes|dictsort:"votos" as sorted_opcoes %}
+                                                                {% with sorted_opcoes.last as maior_votos %}
+                                                                    {% for opcao in sorted_opcoes %}
+                                                                        <li {% if opcao.votos == maior_votos.votos %}class="fw-bold"{% endif %}>
+                                                                            Opção: <strong>{{ opcao.titulo }}</strong> -> {{ opcao.votos }} votos
+                                                                        </li>
+                                                                    {% endfor %}
+                                                                {% endwith %}
                                                             {% endwith %}
                                                         {% endwith %}
-                                                    {% endwith %}
-                                                </ul>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                    <!-- Exibir formulário para enviar a ata apenas se não houver ata registrada -->
-                                    {% if not registro.ata %}
-                                        <form method="post" action="{% url 'enviar_ata' assembleia.id %}">
-                                            {% csrf_token %}
-                                            <div class="form-group">
-                                                <label for="ata_{{ assembleia.id }}">Escreva a ata:</label>
-                                                <textarea class="form-control" id="ata_{{ assembleia.id }}" name="ata" rows="4" required></textarea>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Enviar Ata</button>
-                                        </form>
-                                    {% else %}
-                                        <p class="card-text"><strong>Ata:</strong></p>
-                                        <p>"{{ registro.ata.texto }}"</p>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}               
-                                
-
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                        <!-- Exibir formulário para enviar a ata apenas se não houver ata registrada -->
+                                        {% if not registro.ata %}
+                                            <form method="post" action="{% url 'enviar_ata' assembleia.id %}">
+                                                {% csrf_token %}
+                                                <div class="mb-3">
+                                                    <label for="ata_{{ assembleia.id }}" class="form-label">Escreva a ata:</label>
+                                                    <textarea class="form-control" id="ata_{{ assembleia.id }}" name="ata" rows="4" required></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Enviar Ata</button>
+                                            </form>
+                                        {% else %}
+                                            <p class="card-text mt-3"><strong>Ata:</strong></p>
+                                            <p>"{{ registro.ata.texto }}"</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
-            {% endif %}
-        </div>
-    </div>
+            </div>
+        {% endif %}
+    </div>    
     {% include "footer.html" %}
 </body>
 </html>

@@ -60,11 +60,15 @@
     color: white;
     padding: 10px;
     text-decoration: none;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
 }
 
 .opcoes a:hover {
-    background-color: var(--dark-blue); /* Or any hover effect you prefer */
+    background-color: var(--white); 
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 2rem;
 }
 
 

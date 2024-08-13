@@ -45,6 +45,7 @@
                     {% else %} <!--Morador comum-->
                         <a href="{% url 'user_assembleias' %}">Assembleias</a>
                     {% endif %} <!--Tanto síndico quanto morador-->
+                    <a href="{% url 'atas_list' %}">Atas de Reuniões</a>
                     <a href="{% url 'areas_lazer_list' %}">Áreas de Lazer</a>
                 {% elif user_type == 'not_pessoa' %}
                     <!--Permanece em branco-->

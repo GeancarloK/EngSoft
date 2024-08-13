@@ -1,0 +1,44 @@
+{% load static %}
+{% load custom_tags %}
+{% get_user_type request.user as user_type %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Atas</title>
+    <link rel="stylesheet" href="{% static 'stylesheets/user.css' %}">
+</head>
+<body>
+    {% include "header.html" %}
+    <div class="container my-5">
+        <h1 class="mb-4">Atas Disponíveis</h1>
+    
+        <!-- Formulário de Pesquisa -->
+        <form method="GET" action="{% url 'atas_list' %}" class="d-flex mb-4">
+            <input type="text" name="search" class="form-control me-2" placeholder="Pesquisar por título" value="{{ termo_pesquisa }}" style="margin-top: 10px; padding: 10px 20px; height: auto;">
+            <button type="submit" class="btn btn-primary">Pesquisar</button>
+            <a href="{% url 'atas_list' %}" class="btn btn-secondary ms-2">Limpar</a>
+        </form>
+    
+        {% if registros %}
+            <ul class="list-group">
+                {% for registro in registros %}
+                    <li class="list-group-item mb-3">
+                        <h3 class="mb-2">{{ registro.assembleia.titulo }}</h3>
+                        <p class="mb-2">{{ registro.ata.texto }}</p>
+                        <p class="text-muted mb-0"><strong>Data de Início:</strong> {{ registro.assembleia.data_inicio }}</p>
+                        <p class="text-muted mb-0"><strong>Data de Finalização:</strong> {{ registro.assembleia.data_finalizacao }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">Não há atas disponíveis no momento.</p>
+        {% endif %}
+    
+        <a href="{% url 'user_home' %}" class="btn btn-secondary mt-4">Voltar</a>
+        <div>
+            <p></p>
+        </div>
+    </div>
+    {% include "footer.html" %}
+</body>
+</html>

@@ -58,6 +58,15 @@ a.alert:hover {
     max-width:720px;
 }
 
+.logo-top {
+    margin-bottom: 5rem;
+    max-width: 250px;
+}
+
+.logo-top img {
+    width: 100%;
+}
+
 /* Media query para telas pequenas (celulares) */
 @media screen and (max-width: 900px) {
     .frontpage {

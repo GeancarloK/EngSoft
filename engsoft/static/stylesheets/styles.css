@@ -188,3 +188,7 @@ h1 {
     color: var(--black);
     border-color: var(--white);
 }
+
+.pd-ico {
+    padding: 0 1rem;
+}
